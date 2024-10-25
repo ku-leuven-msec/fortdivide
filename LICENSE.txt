@@ -1,0 +1,10 @@
+The IP-MON component is available under the licensing terms in IPMONLICENSE.txt.
+
+This license applies to the following files:
+- patches/glibc-2.19-ipmon.patch
+- patches/linux-3.13-ipmon.patch
+- The entire IP-MON folder
+
+Unless otherwise specified, all other files in the repository are available
+under the licensing terms in GHUMVEELICENSE.txt.
+

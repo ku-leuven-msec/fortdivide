@@ -1,0 +1,11 @@
+*~
+.*.sw?
+.sw?
+*.vim
+tags
+#*#
+.vscode
+build
+/ext
+/compile_commands.json
+/.cache

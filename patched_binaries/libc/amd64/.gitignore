@@ -1,0 +1,8 @@
+/librt.so.1
+/libutil.so.1
+/libpthread.so.0
+/libresolv.so.2
+/libdl.so.2
+/libm.so.6
+/libc.so.6
+/ld-linux.so

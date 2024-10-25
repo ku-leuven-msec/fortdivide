@@ -1,0 +1,6 @@
+*
+!.gitignore
+!Makefile
+!pmvee_kernel_module.c
+!PMVEE.h
+!PMVEE.c
