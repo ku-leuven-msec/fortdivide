@@ -22,7 +22,7 @@ do_make ()
   cp -r "./doc/config/conf.d" "../out/$__this/$1/base/conf/"
   cp "./doc/config/modules.conf" "../out/$__this/$1/base/conf/"
   cp "./doc/config/test.conf.in" "../out/$__this/$1/base/conf/test.conf"
-  cp ./doc/index* "../out/$__this/$1/base/www/htdocs/"
+  cp ../pmvee_config/index.html "../out/$__this/$1/base/www/htdocs/"
 
   # sed -i "s/SET_LOG_ROOT/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/log/"    "../out/$__this/$1/base/conf/test.conf"
   # sed -i "s/SET_SERVER_ROOT/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/www/" "../out/$__this/$1/base/conf/test.conf"

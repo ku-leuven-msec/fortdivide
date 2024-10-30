@@ -12,14 +12,14 @@ do_make ()
 {
   make clean || true
   make distclean || true
-  ./configure --prefix="$__prefix" --with-http_ssl_module $1 \
+  ./auto/configure --prefix="$__prefix" --with-http_ssl_module $1 \
     --with-cc-opt="-O3 -I"$__pmvee_dir"/  $__CFLAGS" \
     --with-ld-opt="-L"$__pmvee_dir"/ -lpmvee $__LFLAGS"
   make -j"$(nproc)" install
   ln -fs "$__this_dir/cert/*" "$__prefix/conf/"
   ln -fs "$__this_dir/conf/nginx.conf" "$__prefix/conf/"
 
-  cp $__this_dir/html/* $__prefix/html/
+  cp $__this_dir/../pmvee_config/index.html* $__prefix/html/
 }
 
 
@@ -137,7 +137,7 @@ do
       "$__pmvee_dir"/scripts/generate_mappings.py -s ../pmvee_config/nginx-1.23.3/nginx.json -o mappings.pmvee \
         -l "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_l.so)"                                        \
         -f "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_f.so)"                                        \
-        --extras "../pmvee_config/nginx/extra_leader_single"                                                   \
+        --extras "../pmvee_config/nginx-1.23.3/extra_leader_single"                                            \
         -sm "$__pmvee_dir/allocator/pmvee_allocator_l.so:$__pmvee_dir/allocator/pmvee_allocator_f.so"
 
       "$__pmvee_dir"/scripts/get_libc_line.sh >> ./mappings.pmvee
@@ -160,7 +160,7 @@ do
       "$__pmvee_dir"/scripts/generate_mappings.py -s ../pmvee_config/nginx-1.23.3/nginx.json -o mappings.pmvee \
         -l "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_l.so)"                                        \
         -f "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_f.so)"                                        \
-        --extras "../pmvee_config/nginx/extra_leader_single"                                                   \
+        --extras "../pmvee_config/nginx-1.23.3/extra_leader_single"                                            \
         -sm "$__pmvee_dir/allocator/pmvee_allocator_l.so:$__pmvee_dir/allocator/pmvee_allocator_f.so"
 
       "$__pmvee_dir"/scripts/get_libc_line.sh >> ./mappings.pmvee
@@ -198,7 +198,7 @@ do
       "$__pmvee_dir"/scripts/generate_mappings.py -s ../pmvee_config/nginx-1.23.3/nginx.json -o mappings.pmvee \
         -l "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_l.so)"                                        \
         -f "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_f.so)"                                        \
-        --extras "../pmvee_config/nginx/extra_leader_single"                                                   \
+        --extras "../pmvee_config/nginx-1.23.3/extra_leader_single"                                            \
         -sm "$__pmvee_dir/allocator/pmvee_allocator_l.so:$__pmvee_dir/allocator/pmvee_allocator_f.so"
 
       "$__pmvee_dir"/scripts/get_libc_line.sh >> ./mappings.pmvee
@@ -257,7 +257,7 @@ do
       "$__pmvee_dir"/scripts/generate_mappings.py -s ../pmvee_config/nginx-1.23.3/nginx.json -o mappings.pmvee                                        \
         -l "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_l.so)"                                                                              \
         -f "$(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_f.so)"                                                                              \
-        --extras "../pmvee_config/nginx/extra_leader"                                                                                                \
+        --extras "../pmvee_config/nginx-1.23.3/extra_leader"                                                                                         \
         -sc "$(readlink -f $__this_dir/../out/$__this/pmvee/leader/sbin/nginx):$(readlink -f $__this_dir/../out/$__this/pmvee/followers/sbin/nginx)" \
         -sm "$(readlink -f $__this_dir/../out/$__this/pmvee/leader/sbin/nginx):$(readlink -f $__this_dir/../out/$__this/pmvee/followers/sbin/nginx),$__pmvee_dir/allocator/pmvee_allocator_l.so:$__pmvee_dir/allocator/pmvee_allocator_f.so"
 
