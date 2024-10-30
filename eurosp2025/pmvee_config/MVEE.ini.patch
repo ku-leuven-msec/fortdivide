@@ -1,0 +1,30 @@
+diff --git a/MVEE/bin/Release/MVEE.ini b/MVEE/bin/Release/MVEE.ini
+index 1e2b7be..5431ecd 100644
+--- a/MVEE/bin/Release/MVEE.ini
++++ b/MVEE/bin/Release/MVEE.ini
+@@ -1,6 +1,8 @@
+ {
+   "monitor":
+   {
++    "pmvee_mappings": "##benchmark_location##/pmvee_config/mappings.pmvee",
++    "pmvee_migrations": "##benchmark_location##/pmvee_config/migrations.pmvee",
+ 	
+     //
+     // Can be used to forcibly set the location of the ReMon root folder.
+@@ -249,7 +251,15 @@
+     "specs": 
+     {
+ 	  "variant-A": {},
+-      "variant-B": {}
++      "variant-B": {
++      "exec": { "alias" : [
++          "##benchmark_location##/out/nginx-1.23.3/pmvee/leader/sbin/nginx=##benchmark_location##/out/nginx-1.23.3/pmvee/followers/sbin/nginx",
++          "##benchmark_location##/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##benchmark_location##/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
++          "##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
++          "##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
++          "##benchmark_location##/../PMVEE/allocator/pmvee_allocator_l.so=##benchmark_location##/../PMVEE/allocator/pmvee_allocator_f.so",
++        ]}
++      }
+     }
+   }
+ }

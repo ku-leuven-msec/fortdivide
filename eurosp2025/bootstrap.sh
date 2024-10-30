@@ -36,6 +36,7 @@ then
     git checkout release-1.23.3
     patch -d ./ -p 2 < ../patches/nginx-1.23.3.patch
     ln -fs ../build_scripts/nginx-1.23.3-build.sh ./
+    ./auto/configure
     cd ../
 fi
 ## nginx
@@ -53,10 +54,18 @@ fi
 ## lighttpd
 
 ## final benchmark setup
-sed -r -i "s.##benchmark_location##.##benchmark_location_altered##.g" ./pmvee_config/nginx-1.23.3/*
-sed -r -i "s.##benchmark_location##.##benchmark_location_altered##.g" ./pmvee_config/lighttpd-1.4.60/*
+sed -r -i "s.##benchmark_location##.$(readlink -f ./).g" ./pmvee_config/nginx-1.23.3/*
+sed -r -i "s.##benchmark_location##.$(readlink -f ./).g" ./pmvee_config/lighttpd-1.4.60/*
+sed -r -i "s.##benchmark_location##.$(readlink -f ./).g" ./pmvee_config/MVEE.ini.patch/*
 
-cd ../PMVEE/allocator/
+cd ../
+patch -d ./ -p 1 < eurosp2025/pmvee_config/MVEE.ini.patch
+
+
+cd ./PMVEE/allocator/
 make
-cd ../../eurosp2025
+cd ../
+make lib
+make module-install
+cd ../eurosp2025
 ## final benchmark setup
