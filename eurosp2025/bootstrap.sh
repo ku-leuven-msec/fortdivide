@@ -8,6 +8,9 @@ set -e
 cd ../
 
 ./bootstrap.sh
+cd build/
+make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null
+cd ../
 
 cd eurosp2025/
 ## fortdivide changes to ReMon build and config

@@ -64,11 +64,8 @@ void mvee::setup_env(int variantnum)
 	#elif 1 // elif defined(PMVEE_ALLOCATOR)
 	if (ld_preload.size())
 		ld_preload += ":";
-	ld_preload += "/home/MayDefourth/repos/pmvee-benchmarks/allocator/mine/pmvee_allocator_l.so";
-	#else
-	if (ld_preload.size())
-		ld_preload += ":";
-	ld_preload += "/home/MayDefourth/repos/pmvee-benchmarks/allocator/hardened_malloc/out/libhardened_malloc.so";
+	ld_preload += os_get_mvee_root_dir();
+	ld_preload += "/PMVEE/allocator/pmvee_allocator_l.so";
 	#endif
 	setenv("LD_PRELOAD", mvee::strdup(ld_preload.c_str()), 1);
    
