@@ -22,7 +22,7 @@ index 1e2b7be..5431ecd 100644
 +          "##benchmark_location##/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##benchmark_location##/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
 +          "##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
 +          "##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
-+          "##benchmark_location##/../PMVEE/allocator/pmvee_allocator_l.so=##benchmark_location##/../PMVEE/allocator/pmvee_allocator_f.so",
++          "##fortdivide_location##/PMVEE/allocator/pmvee_allocator_l.so=##fortdivide_location##/PMVEE/allocator/pmvee_allocator_f.so",
 +        ]}
 +      }
      }
@@ -52,7 +52,7 @@ index 1e2b7be..5431ecd 100644
 +          "##benchmark_location##/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##benchmark_location##/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
 +          "##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
 +          "##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
-+          "##benchmark_location##/../PMVEE/allocator/pmvee_allocator_l.so=##benchmark_location##/../PMVEE/allocator/pmvee_allocator_f.so",
++          "##fortdivide_location##/PMVEE/allocator/pmvee_allocator_l.so=##fortdivide_location##/PMVEE/allocator/pmvee_allocator_f.so",
 +        ]}
 +      }
      }
