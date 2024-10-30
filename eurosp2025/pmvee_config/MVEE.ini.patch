@@ -6,8 +6,8 @@ index 1e2b7be..5431ecd 100644
  {
    "monitor":
    {
-+    "pmvee_mappings": "##benchmark_location##/pmvee_config/mappings.pmvee",
-+    "pmvee_migrations": "##benchmark_location##/pmvee_config/migrations.pmvee",
++    "pmvee_mappings": "##fortdivide_location##/eurosp2025/pmvee_config/mappings.pmvee",
++    "pmvee_migrations": "##fortdivide_location##/eurosp2025/pmvee_config/migrations.pmvee",
  	
      //
      // Can be used to forcibly set the location of the ReMon root folder.
@@ -18,10 +18,10 @@ index 1e2b7be..5431ecd 100644
 -      "variant-B": {}
 +      "variant-B": {
 +      "exec": { "alias" : [
-+          "##benchmark_location##/out/nginx-1.23.3/pmvee/leader/sbin/nginx=##benchmark_location##/out/nginx-1.23.3/pmvee/followers/sbin/nginx",
-+          "##benchmark_location##/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##benchmark_location##/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
-+          "##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
-+          "##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
++          "##fortdivide_location##/eurosp2025/out/nginx-1.23.3/pmvee/leader/sbin/nginx=##fortdivide_location##/eurosp2025/out/nginx-1.23.3/pmvee/followers/sbin/nginx",
++          "##fortdivide_location##/eurosp2025/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##fortdivide_location##/eurosp2025/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
++          "##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
++          "##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
 +          "##fortdivide_location##/PMVEE/allocator/pmvee_allocator_l.so=##fortdivide_location##/PMVEE/allocator/pmvee_allocator_f.so",
 +        ]}
 +      }
@@ -36,8 +36,8 @@ index 1e2b7be..5431ecd 100644
  {
    "monitor":
    {
-+    "pmvee_mappings": "##benchmark_location##/pmvee_config/mappings.pmvee",
-+    "pmvee_migrations": "##benchmark_location##/pmvee_config/migrations.pmvee",
++    "pmvee_mappings": "##fortdivide_location##/eurosp2025/pmvee_config/mappings.pmvee",
++    "pmvee_migrations": "##fortdivide_location##/eurosp2025/pmvee_config/migrations.pmvee",
  	
      //
      // Can be used to forcibly set the location of the ReMon root folder.
@@ -48,10 +48,10 @@ index 1e2b7be..5431ecd 100644
 -      "variant-B": {}
 +      "variant-B": {
 +      "exec": { "alias" : [
-+          "##benchmark_location##/out/nginx-1.23.3/pmvee/leader/sbin/nginx=##benchmark_location##/out/nginx-1.23.3/pmvee/followers/sbin/nginx",
-+          "##benchmark_location##/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##benchmark_location##/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
-+          "##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##benchmark_location##/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
-+          "##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##benchmark_location##/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
++          "##fortdivide_location##/eurosp2025/out/nginx-1.23.3/pmvee/leader/sbin/nginx=##fortdivide_location##/eurosp2025/out/nginx-1.23.3/pmvee/followers/sbin/nginx",
++          "##fortdivide_location##/eurosp2025/out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd=##fortdivide_location##/eurosp2025/out/lighttpd-1.4.60/pmvee/followers/sbin/lighttpd",
++          "##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
++          "##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
 +          "##fortdivide_location##/PMVEE/allocator/pmvee_allocator_l.so=##fortdivide_location##/PMVEE/allocator/pmvee_allocator_f.so",
 +        ]}
 +      }
