@@ -7593,6 +7593,8 @@ CALL(mmap)
         if (ARG4(0) & MAP_PMVEE)
         {
 			#ifndef PMVEE_NO_ALLOCATOR
+			if (ARG4(0) & MAP_FIXED && ARG1(0) >= mp_start && ARG1(0) < (mp_start + mp_size))
+				return MVEE_CALL_ALLOW;
 			#else
 			if (ARG4(0) & MAP_FIXED)
 				return MVEE_CALL_ALLOW;
