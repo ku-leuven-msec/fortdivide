@@ -1,10 +1,27 @@
 #!/bin/bash
 set -e
 
-## top level remon
-## top level remon
+cd $(readlink -f $(dirname ${BASH_SOURCE}))
 
-## fortdivide changes to ReMon build and config
+## kernel
+mkdir kernel/
+cd kernel/
+sudo apt-get update
+sudo apt-get install linux-source-5.4.0
+tar jxf /usr/src/linux-source-5.4.0/linux-source-5.4.0.tar.bz2
+cd linux-source-5.4.0
+patch -p1 < ../../../patches/linux-5.4.0-full-ipmon-pmvee.patch
+make menuconfig 
+# while you're in the config menu, you might want to bump the kernel tick rate up to 1000Hz
+# you can do so by navigating to "Processor type and features" > "Timer Frequency"
+./scripts/config --disable CONFIG_SYSTEM_TRUSTED_KEYS
+./scripts/config --disable SYSTEM_REVOCATION_KEYS
+make -j$(nproc) deb-pkg LOCALVERSION=-ipmon-pmvee
+sudo dpkg -i ../linux-headers*.deb ../linux-image*.deb ../linux-libc-dev*.deb
+cd ../../
+## kernel
+
+## top level remon
 cd ../
 
 ./bootstrap.sh
@@ -13,6 +30,9 @@ make enable-ipmon-pmvee && ake block-shm && make benchmark && make -j 1>/dev/nul
 cd ../
 
 cd eurosp2025/
+## top level remon
+
+## fortdivide changes to ReMon build and config
 ## fortdivide changes to ReMon build and config
 
 ## fortdivide changes to ReMon libc build and config
