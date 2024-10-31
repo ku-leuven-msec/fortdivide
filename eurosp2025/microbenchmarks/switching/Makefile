@@ -20,7 +20,7 @@ pmvee: switcheroo.c dirs
 	ln -fs $(shell readlink -f ./lib/switcheroo_l.so) ../../../patched_binaries/gnomelibs/amd64/switcheroo_l.so
 	ln -fs $(shell readlink -f ./lib/switcheroo_f.so) ../../../patched_binaries/gnomelibs/amd64/switcheroo_f.so
 
-	ln -fs $(shell readlink -f ./bin/switcheroo.pmvee) ../../pmvee_headers/mappings.pmvee
+	ln -fs $(shell readlink -f ./bin/switcheroo.pmvee) ../../pmvee_config/mappings.pmvee
 
 dirs:
 	mkdir lib || true
