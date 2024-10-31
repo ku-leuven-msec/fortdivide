@@ -46,17 +46,9 @@ then
     CFLAGS="-g -O2 -fno-builtin -Wno-alloca-larger-than -ggdb -fno-omit-frame-pointer" ../configure --enable-stackguard-randomization --enable-obsolete-rpc --enable-pt_chown --with-selinux --enable-lock-elision=no --enable-addons=nptl --prefix=/usr/ --sysconfdir=/etc/
     make -j
     # ln -fs $(readlink -f ./) ../../../patched_binaries/libc/amd64/
-    ln -fs $(readlink -f ./elf/ld-linux-x86-64.so.2) ../../../patched_binaries/libc/amd64/ld-linux.so # ld-2.31.so
-    ln -fs $(readlink -f ./libc.so) ../../../patched_binaries/libc/amd64/libc.so.6 # libc-2.31.so
-    ln -fs $(readlink -f ./dlfcn/libdl.so) ../../../patched_binaries/libc/amd64/libdl.so.2 # libdl-2.31.so
-    ln -fs $(readlink -f ./math/libm.so) ../../../patched_binaries/libc/amd64/libm.so.6 # libm-2.31.so
-    ln -fs $(readlink -f ./nptl/libpthread.so) ../../../patched_binaries/libc/amd64/libpthread.so.0 # libpthread-2.31.so
-    ln -fs $(readlink -f ./resolv/libresolv.so) ../../../patched_binaries/libc/amd64/libresolv.so.2 # libresolv-2.31.so
-    ln -fs $(readlink -f ./rt/librt.so) ../../../patched_binaries/libc/amd64/librt.so.1 # librt-2.31.so
-    ln -fs $(readlink -f ./login/libutil.so) ../../../patched_binaries/libc/amd64/libutil.so.1 # libutil-2.31.so
-
     cd ../../
 fi
+./fortdivide-libc.sh
 ## fortdivide changes to ReMon libc build and config
 
 ## nginx
