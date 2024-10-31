@@ -14,7 +14,7 @@ pmvee: mapping_count.c dirs
 	-L./lib/ -l:mapping_count_l.so -L../../../PMVEE/ -lpmvee    \
 	-O3 -pie -fPIC -o ./bin/mapping_count_pmvee mapping_count.c
 
-	../../../PMVEEscripts/generate_mappings.py                                                                 \
+	../../../PMVEE/scripts/generate_mappings.py                                                                 \
 	 	-o  ./bin/mapping_count.pmvee -s mapping_count.json                                                    \
 		-l  "$(shell readlink -f ./lib/mapping_count_l.so)" -f "$(shell readlink -f ./lib/mapping_count_f.so)" \
 		-sc "$(shell readlink -f ./lib/mapping_count_l.so):$(shell readlink -f ./lib/mapping_count_f.so)"      \
@@ -23,7 +23,7 @@ pmvee: mapping_count.c dirs
 	ln -fs $(shell readlink -f ./lib/mapping_count_l.so) ../../../patched_binaries/gnomelibs/amd64/mapping_count_l.so
 	ln -fs $(shell readlink -f ./lib/mapping_count_f.so) ../../../patched_binaries/gnomelibs/amd64/mapping_count_f.so
 
-	ln -fs $(shell readlink -f ./bin/mapping_count.pmvee) ../../pmvee_headers/mappings.pmvee
+	ln -fs $(shell readlink -f ./bin/mapping_count.pmvee) ../../pmvee_config/mappings.pmvee
 
 dirs:
 	mkdir lib || true

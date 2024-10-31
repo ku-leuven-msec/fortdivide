@@ -425,7 +425,7 @@ int main(int argc, char** argv)
             mp_start = 0;
             if (mp_size)
             {
-                mp_start = mmap(RANDOM_BASE, mp_size, PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE | 0x2000000, -1, 0);
+                mp_start = mmap(RANDOM_BASE, mp_size, PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE | 0x2000000, -1, 0);
                 if (mp_start == MAP_FAILED)
                 {
                     printf(" Could not set up mappings. errno: %d\n", errno);
