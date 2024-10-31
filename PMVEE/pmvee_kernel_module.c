@@ -21,11 +21,15 @@ MODULE_DESCRIPTION("PMVEE kernel module");
 MODULE_VERSION("0.1");
 
 
-#define PMVEE_KERNEL_NO_UNMAP      1
-#define PMVEE_KERNEL_SKIP          2
-#define PMVEE_KERNEL_SHORTEST_SKIP 3
+#define PMVEE_KERNEL_UNMAP                  0 // always munmap and mmap mappings in NDP
+#define PMVEE_KERNEL_NO_UNMAP               1 // use zap and copy_page_range for existing mappings
+#define PMVEE_KERNEL_SKIP                   2 // use shorter zap and copy_page_range definitions in module
+#define PMVEE_KERNEL_MERGE_PMD_SKIP         3 // use merged zap and copy_page_range definitions in module
+#define PMVEE_KERNEL_MERGE_PMD_SHORTER_SKIP 4 // use merged zap and copy_page_range definitions in module
+#define PMVEE_KERNEL_MERGE_PTE_SKIP         5 // use merged zap and copy_page_range definitions in module
+#define PMVEE_KERNEL_SHORTEST_SKIP          6 // skip those pages that weren't accessed
 
-#define PMVEE_SKIP_LEVEL 3
+#define PMVEE_SKIP_LEVEL PMVEE_KERNEL_MERGE_PMD_SHORTER_SKIP
 
 
 // define DEBUG_ME
@@ -193,6 +197,8 @@ pmvee_copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
 		pte_t *dst_pte, pte_t *src_pte, struct vm_area_struct *vma,
 		unsigned long addr, int *rss)
 {
+	debugk("copying %llx", addr);
+	// printk("[%d] copying %llx\n", current->pid, addr);
 	unsigned long vm_flags = vma->vm_flags;
 	pte_t pte = *src_pte;
 	struct page *page;
@@ -334,6 +340,8 @@ again:
 			progress++;
 			continue;
 		}
+
+		#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_MERGE_PMD_SHORTER_SKIP
 		if (pte_pfn(*src_pte) == pte_pfn(*dst_pte)) {
 			debugk(" > skipping copy\n");
 			progress++;
@@ -343,6 +351,8 @@ again:
 		{
 			debugk(" > copy: %llx - %llx\n", pte_pfn(*dst_pte), pte_pfn(*src_pte));
 		}
+		#endif
+
 		entry.val = pmvee_copy_one_pte(dst_mm, src_mm, dst_pte, src_pte, vma, addr, rss);
 		debugk(" > after copy: %llx - %llx\n", pte_pfn(*dst_pte), pte_pfn(*src_pte));
 		if (entry.val)
@@ -658,7 +668,7 @@ again:
 		if (pte_none(*dst_pte))
 			continue;
 
-		#ifndef PMVEE_MICROBENCHMARK
+		#if PMVEE_SKIP_LEVEL == PMVEE_KERNEL_SHORTEST_SKIP || PMVEE_SKIP_LEVEL == PMVEE_KERNEL_MERGE_PMD_SHORTER_SKIP
 		if (pte_pfn(*dst_pte) == pte_pfn(*src_pte))
 		{
 			debugk(" > skipping zap\n");
@@ -674,7 +684,7 @@ again:
 			break;
 
 		force_flush = pmvee_zap_one_pte(tlb, dst_mm, dst_vma, dst_pte, &addr, rss, details);
-		#if PMVEE_SKIP_LEVEL == 3
+		#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_MERGE_PTE_SKIP
 		pmvee_copy_one_pte(dst_mm, src_mm, dst_pte, src_pte, src_vma, addr, rss);
 		#endif
 
@@ -754,7 +764,7 @@ static inline unsigned long pmvee_zap_pmd_range(struct mmu_gather *tlb,
 		if (pmd_none_or_trans_huge_or_clear_bad(dst_pmd))
 			goto next;
 		next = pmvee_zap_pte_range(tlb, dst_vma, src_vma, dst_pmd, src_pmd, addr, next, details);
-		#if PMVEE_SKIP_LEVEL == PMVEE_KERNEL_SHORTEST_SKIP
+		#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_MERGE_PMD_SKIP && PMVEE_SKIP_LEVEL <= PMVEE_KERNEL_MERGE_PMD_SHORTER_SKIP
 		pmvee_copy_pte_range(dst_vma->vm_mm, src_vma->vm_mm, dst_pmd, src_pmd, src_vma, addr, next);
 		#endif
 next:
@@ -1092,6 +1102,7 @@ static long actual_pmvee_switch(
         }
     }
 
+	// printk("[%d] start\n", current->pid);
     // putting it in a separate function is annoying, hence this loop to run this twice.
     to = from + size_one;
     remove = ~(VM_EXEC | VM_MAYEXEC);
@@ -1101,6 +1112,7 @@ static long actual_pmvee_switch(
         while (source_mapping && source_mapping->vm_end <= to)
         {
             debugk(" > doing [ %lx ; %lx )\n", source_mapping->vm_start, source_mapping->vm_end);
+            // printk("[%d] doing [ %lx ; %lx )\n", current->pid, source_mapping->vm_start, source_mapping->vm_end);
             if (!(flags & PMVEE_FLAGS_DUP_EXEC) && (source_mapping->vm_flags & VM_EXEC))
                 goto __pmvee_switch_next_mapping;
 
@@ -1111,7 +1123,7 @@ static long actual_pmvee_switch(
                 goto cleanup;
             }
 
-			#if PMVEE_SKIP_LEVEL > 0
+			#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_NO_UNMAP
             if (!prev || !prev->vm_next ||
                     prev->vm_next->vm_start != source_mapping->vm_start ||
                     prev->vm_next->vm_end != source_mapping->vm_end)
@@ -1190,13 +1202,13 @@ static long actual_pmvee_switch(
 				if (tmp->vm_ops && tmp->vm_ops->open)
 					tmp->vm_ops->open(tmp);
             }
-			#if PMVEE_SKIP_LEVEL > 0
+			#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_NO_UNMAP
             else
 			{
                 tmp = prev->vm_next;
-				#if PMVEE_SKIP_LEVEL > 1
+				#if PMVEE_SKIP_LEVEL >= PMVEE_KERNEL_SKIP
                 pmvee_zap_page_range(tmp, source_mapping, tmp->vm_start, tmp->vm_end - tmp->vm_start);
-				  #if PMVEE_SKIP_LEVEL < 3
+				  #if PMVEE_SKIP_LEVEL <= PMVEE_KERNEL_SKIP
                 if (pmvee_copy_page_range(destination_mm, source_mm, source_mapping))
                 {
                     printk(" > couldn't copy pages\n");
@@ -1232,6 +1244,7 @@ static long actual_pmvee_switch(
         to = to + size_two;
         // remove = ~(VM_EXEC | VM_MAYEXEC | VM_WRITE | VM_MAYWRITE);
     }
+	// printk("[%d] done\n", current->pid);
     debugk(" > done [ %lx ; %lx )\n", source_mapping->vm_start, source_mapping->vm_end);
     if (prev && prev->vm_next && prev->vm_next->vm_start < to)
     {
@@ -1277,7 +1290,8 @@ static long actual_pmvee_check (
 	LIST_HEAD(uf);
 
     debugk("checking <%d> - %d to %d\n", current->pid, source, destination);
-
+	// printk("[%d] from check\n", current->pid);
+	// actual_pmvee_switch(source, destination, from, size_one, size_two, flags);
 
     if (current->pid == source)
     {
@@ -1299,7 +1313,12 @@ static long actual_pmvee_check (
             return -EINVAL;
         }    
     }
-    else if (current->pid == destination)
+    return 0;
+
+
+
+	
+    /*else*/ if (current->pid == destination)
     {
         struct pid* source_pid;
 
@@ -1323,7 +1342,6 @@ static long actual_pmvee_check (
     {
         return -EINVAL;
     }
-    return 0;
 
 
 	destination_mm = destination_task->mm;
