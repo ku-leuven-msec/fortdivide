@@ -67,7 +67,8 @@ fi
 ## final benchmark setup
 sed -r -i "s.##benchmark_location##.$(readlink -f ./).g" ./pmvee_config/nginx-1.23.3/*
 sed -r -i "s.##benchmark_location##.$(readlink -f ./).g" ./pmvee_config/lighttpd-1.4.60/*
-sed -r -i "s.##fortdivide_location##.$(readlink -f ../).g" ./pmvee_config/MVEE.ini.patch*
+sed -r -i "s.##benchmark_location##.$(readlink -f ../).g" ./microbenchmarks/mapping_count/mapping_count.json
+sed -r -i "s.##fortdivide_location##.$(readlink -f ../).g" ./pmvee_config/MVEE.ini.patch
 
 ln -fs $(readlink -f ./pmvee_config/nginx-1.23.3/lib/nginx_l.so) ../patched_binaries/gnomelibs/amd64/
 
