@@ -4,22 +4,39 @@ set -e
 cd $(readlink -f $(dirname ${BASH_SOURCE}))
 
 ## kernel
-mkdir kernel/
-cd kernel/
-sudo apt-get update
-sudo apt-get install linux-source-5.4.0
-tar jxf /usr/src/linux-source-5.4.0/linux-source-5.4.0.tar.bz2
-cd linux-source-5.4.0
-patch -p1 < ../../../patches/linux-5.4.0-full-ipmon-pmvee.patch
-make menuconfig 
-# while you're in the config menu, you might want to bump the kernel tick rate up to 1000Hz
-# you can do so by navigating to "Processor type and features" > "Timer Frequency"
-./scripts/config --disable CONFIG_SYSTEM_TRUSTED_KEYS
-./scripts/config --disable SYSTEM_REVOCATION_KEYS
-make -j$(nproc) deb-pkg LOCALVERSION=-ipmon-pmvee
-sudo dpkg -i ../linux-headers*.deb ../linux-image*.deb ../linux-libc-dev*.deb
-cd ../../
+if [[ ! $(uname -r | grep -e "-ipmon-pmvee") ]]
+then 
+    mkdir kernel/ || true
+    cd kernel/
+    sudo apt-get update
+    sudo apt-get install linux-source-5.4.0
+    tar jxf /usr/src/linux-source-5.4.0/linux-source-5.4.0.tar.bz2
+    cd linux-source-5.4.0
+    patch -p1 < ../../../patches/linux-5.4.0-full-ipmon-pmvee.patch
+    make menuconfig 
+    # while you're in the config menu, you might want to bump the kernel tick rate up to 1000Hz
+    # you can do so by navigating to "Processor type and features" > "Timer Frequency"
+    ./scripts/config --disable CONFIG_SYSTEM_TRUSTED_KEYS
+    ./scripts/config --disable SYSTEM_REVOCATION_KEYS
+    make -j$(nproc) deb-pkg LOCALVERSION=-ipmon-pmvee
+    sudo dpkg -i ../linux-headers*.deb ../linux-image*.deb ../linux-libc-dev*.deb
+    cd ../../
+fi
 ## kernel
+
+## kernel check
+if [[ ! $(uname -r | grep -e "-ipmon-pmvee") ]]
+then 
+    echo "FORTDIVIDE requires our custom kernel patch to be applied."
+    if [[ $(grep -e "-ipmon-pmvee" /boot/grub/grub.cfg) ]]
+    then
+        echo "It appears you do have to correct kernel installed on this system, please reboot to it"
+    else
+        echo "You do not appear to have the correct kernel installed on this system, perhaps something went wrong compiling and installing it."
+    fi
+    exit 1    
+fi
+## kernel check
 
 ## top level remon
 cd ../
