@@ -10,8 +10,8 @@ __orig_remon_exec_dir="$__orig_remon_dir/MVEE/bin/Release/"
 
 __remon_dir="##fortdivide_location##/"
 __remon_exec_dir="##fortdivide_location##/MVEE/bin/Release/"
-__remon_glibc_dir="##fortdivide_location##/eruosp2025/ReMon-glibc/"
-__benchmark_dir="##fortdivide_location##/eruosp2025/"
+__remon_glibc_dir="##fortdivide_location##/eurosp2025/ReMon-glibc/"
+__benchmark_dir="##fortdivide_location##/eurosp2025/"
 __benchmark_dir_out="$__benchmark_dir/out/"
 
 __server_ip="localhost:8080"
