@@ -78,7 +78,7 @@ diff -ur orig/include/linux/sched.h linux-source-5.4.0/include/linux/sched.h
 +     1) The syscall must have originated from IP-MON
 +     2) IP-MON must pass the IP-MON key as the 7th syscall argument
 +  */
-+  unsigned char ipmon_masked_syscalls[ROUND_UP(__NR_syscalls, 8) / 8];
++  unsigned char ipmon_masked_syscalls[ROUND_UP(510, 8) / 8];
 +
 +  /* Is IP-MON enabled within this thread */
 +  unsigned char ipmon_enabled;
