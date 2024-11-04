@@ -112,4 +112,9 @@ cd ../
 make lib
 make module-install
 cd ../eurosp2025
+
+echo "" >> ~/.ssh/config
+echo "Host fortdivide-benchmark" >> ~/.ssh/config
+echo "    Hostname localhost" >> ~/.ssh/config
+echo "    User $USER" >> ~/.ssh/config
 ## final benchmark setup
