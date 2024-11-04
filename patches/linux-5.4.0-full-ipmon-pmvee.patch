@@ -1,6 +1,6 @@
 diff -ur orig/arch/x86/entry/syscalls/syscall_64.tbl linux-source-5.4.0/arch/x86/entry/syscalls/syscall_64.tbl
---- orig/arch/x86/entry/syscalls/syscall_64.tbl	2019-11-25 01:32:01.000000000 +0100
-+++ linux-source-5.4.0/arch/x86/entry/syscalls/syscall_64.tbl	2022-07-28 14:30:23.945840278 +0200
+--- orig/arch/x86/entry/syscalls/syscall_64.tbl
++++ linux-source-5.4.0/arch/x86/entry/syscalls/syscall_64.tbl
 @@ -364,6 +364,9 @@
  # on-the-fly for compat_sys_*() compatibility system calls if X86_X32
  # is defined.
@@ -11,10 +11,21 @@ diff -ur orig/arch/x86/entry/syscalls/syscall_64.tbl linux-source-5.4.0/arch/x86
  512	x32	rt_sigaction		__x32_compat_sys_rt_sigaction
  513	x32	rt_sigreturn		sys32_x32_rt_sigreturn
  514	x32	ioctl			__x32_compat_sys_ioctl
-diff --color -ruN linux-source-5.4.0/fs/exec.c custom-linux-source-5.4.0/fs/exec.c
---- linux-source-5.4.0/fs/exec.c	2021-11-05 17:30:43.000000000 +0100
-+++ custom-linux-source-5.4.0/fs/exec.c	2021-12-06 11:03:28.844120436 +0100
-@@ -1876,6 +1876,8 @@
+diff -ur orig/arch/x86/mm/tlb.c linux-source-5.4.0/arch/x86/mm/tlb.c
+--- orig/arch/x86/mm/tlb.c
++++ linux-source-5.4.0/arch/x86/mm/tlb.c
+@@ -806,6 +806,7 @@
+ 	put_flush_tlb_info();
+ 	put_cpu();
+ }
++EXPORT_SYMBOL(flush_tlb_mm_range);
+ 
+ 
+ static void do_flush_tlb_all(void *info)
+diff -ur orig/fs/exec.c linux-source-5.4.0/fs/exec.c
+--- orig/fs/exec.c
++++ linux-source-5.4.0/fs/exec.c
+@@ -1906,6 +1906,8 @@
  		putname(filename);
  	if (displaced)
  		put_files_struct(displaced);
@@ -23,10 +34,10 @@ diff --color -ruN linux-source-5.4.0/fs/exec.c custom-linux-source-5.4.0/fs/exec
  	return retval;
  
  out:
-diff --color -ruN linux-source-5.4.0/include/linux/sched.h custom-linux-source-5.4.0/include/linux/sched.h
---- linux-source-5.4.0/include/linux/sched.h	2021-11-05 17:30:43.000000000 +0100
-+++ custom-linux-source-5.4.0/include/linux/sched.h	2021-12-06 11:03:28.844120436 +0100
-@@ -621,6 +621,58 @@
+diff -ur orig/include/linux/sched.h linux-source-5.4.0/include/linux/sched.h
+--- orig/include/linux/sched.h
++++ linux-source-5.4.0/include/linux/sched.h
+@@ -625,6 +625,58 @@
  	struct wake_q_node *next;
  };
  
@@ -114,10 +125,10 @@ diff --color -ruN linux-source-5.4.0/include/linux/sched.h custom-linux-source-5
  static inline struct pid *task_pid(struct task_struct *task)
  {
  	return task->thread_pid;
-diff --color -ruN linux-source-5.4.0/include/linux/tracehook.h custom-linux-source-5.4.0/include/linux/tracehook.h
---- linux-source-5.4.0/include/linux/tracehook.h	2019-11-25 01:32:01.000000000 +0100
-+++ custom-linux-source-5.4.0/include/linux/tracehook.h	2021-12-06 11:03:28.848120498 +0100
-@@ -101,6 +101,11 @@
+diff -ur orig/include/linux/tracehook.h linux-source-5.4.0/include/linux/tracehook.h
+--- orig/include/linux/tracehook.h
++++ linux-source-5.4.0/include/linux/tracehook.h
+@@ -101,6 +101,15 @@
  static inline __must_check int tracehook_report_syscall_entry(
  	struct pt_regs *regs)
  {
@@ -133,12 +144,12 @@ diff --color -ruN linux-source-5.4.0/include/linux/tracehook.h custom-linux-sour
  	return ptrace_report_syscall(regs, PTRACE_EVENTMSG_SYSCALL_ENTRY);
  }
  
-@@ -125,8 +130,15 @@
+@@ -126,7 +135,18 @@
  	if (step)
  		user_single_step_report(regs);
  	else
 -		ptrace_report_syscall(regs, PTRACE_EVENTMSG_SYSCALL_EXIT);
-+    {
++	{
 +        if ((current->ptrace & PT_PTRACED) && pmvee_should_skip(regs, 0))
 +        {
 +            return;
@@ -149,13 +160,13 @@ diff --color -ruN linux-source-5.4.0/include/linux/tracehook.h custom-linux-sour
 +            return;
 +        }
 +        ptrace_report_syscall(regs, PTRACE_EVENTMSG_SYSCALL_EXIT);
-+    }
++	}
  }
  
  /**
-diff --color -ruN linux-source-5.4.0/include/uapi/asm-generic/errno.h custom-linux-source-5.4.0/include/uapi/asm-generic/errno.h
---- linux-source-5.4.0/include/uapi/asm-generic/errno.h	2019-11-25 01:32:01.000000000 +0100
-+++ custom-linux-source-5.4.0/include/uapi/asm-generic/errno.h	2021-12-06 11:03:28.848120498 +0100
+diff -ur orig/include/uapi/asm-generic/errno.h linux-source-5.4.0/include/uapi/asm-generic/errno.h
+--- orig/include/uapi/asm-generic/errno.h
++++ linux-source-5.4.0/include/uapi/asm-generic/errno.h
 @@ -120,4 +120,6 @@
  
  #define EHWPOISON	133	/* Memory page has hardware error */
@@ -163,9 +174,9 @@ diff --color -ruN linux-source-5.4.0/include/uapi/asm-generic/errno.h custom-lin
 +#define ENOIPMON    256 /* MVEE IP-MON patch */
 +
  #endif
-diff --color -ruN linux-source-5.4.0/include/uapi/linux/prctl.h custom-linux-source-5.4.0/include/uapi/linux/prctl.h
---- linux-source-5.4.0/include/uapi/linux/prctl.h	2019-11-25 01:32:01.000000000 +0100
-+++ custom-linux-source-5.4.0/include/uapi/linux/prctl.h	2021-12-06 11:03:28.848120498 +0100
+diff -ur orig/include/uapi/linux/prctl.h linux-source-5.4.0/include/uapi/linux/prctl.h
+--- orig/include/uapi/linux/prctl.h
++++ linux-source-5.4.0/include/uapi/linux/prctl.h
 @@ -234,4 +234,6 @@
  #define PR_GET_TAGGED_ADDR_CTRL		56
  # define PR_TAGGED_ADDR_ENABLE		(1UL << 0)
@@ -174,9 +185,9 @@ diff --color -ruN linux-source-5.4.0/include/uapi/linux/prctl.h custom-linux-sou
 +
  #endif /* _LINUX_PRCTL_H */
 diff -ur orig/kernel/events/uprobes.c linux-source-5.4.0/kernel/events/uprobes.c
---- orig/kernel/events/uprobes.c	2022-06-22 17:00:11.000000000 +0200
-+++ linux-source-5.4.0/kernel/events/uprobes.c	2022-07-28 14:36:42.971517279 +0200
-@@ -1569,11 +1569,13 @@
+--- orig/kernel/events/uprobes.c
++++ linux-source-5.4.0/kernel/events/uprobes.c
+@@ -1568,11 +1568,13 @@
  {
  	percpu_down_read(&dup_mmap_sem);
  }
@@ -190,7 +201,7 @@ diff -ur orig/kernel/events/uprobes.c linux-source-5.4.0/kernel/events/uprobes.c
  
  void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
  {
-@@ -1583,6 +1585,7 @@
+@@ -1582,6 +1584,7 @@
  		set_bit(MMF_RECALC_UPROBES, &newmm->flags);
  	}
  }
@@ -199,8 +210,8 @@ diff -ur orig/kernel/events/uprobes.c linux-source-5.4.0/kernel/events/uprobes.c
  /*
   *  - search for a free slot.
 diff -ur orig/kernel/fork.c linux-source-5.4.0/kernel/fork.c
---- orig/kernel/fork.c	2022-06-22 17:00:11.000000000 +0200
-+++ linux-source-5.4.0/kernel/fork.c	2022-07-28 14:36:11.985555693 +0200
+--- orig/kernel/fork.c
++++ linux-source-5.4.0/kernel/fork.c
 @@ -366,6 +366,7 @@
  	}
  	return new;
@@ -209,10 +220,7 @@ diff -ur orig/kernel/fork.c linux-source-5.4.0/kernel/fork.c
  
  void vm_area_free(struct vm_area_struct *vma)
  {
-diff --color -ruN linux-source-5.4.0/kernel/fork.c custom-linux-source-5.4.0/kernel/fork.c
---- linux-source-5.4.0/kernel/fork.c	2021-11-05 17:30:43.000000000 +0100
-+++ custom-linux-source-5.4.0/kernel/fork.c	2021-12-06 11:03:28.848120498 +0100
-@@ -1879,6 +1879,11 @@
+@@ -1887,6 +1888,11 @@
  	if (!p)
  		goto fork_out;
  
@@ -224,22 +232,23 @@ diff --color -ruN linux-source-5.4.0/kernel/fork.c custom-linux-source-5.4.0/ker
  	/*
  	 * This _must_ happen before we call free_task(), i.e. before we jump
  	 * to any of the bad_fork_* labels. This is to avoid freeing
-diff --color -ruN linux-source-5.4.0/kernel/sys.c custom-linux-source-5.4.0/kernel/sys.c
---- linux-source-5.4.0/kernel/sys.c	2021-11-05 17:30:43.000000000 +0100
-+++ custom-linux-source-5.4.0/kernel/sys.c	2021-12-06 11:06:40.666128312 +0100
-@@ -61,6 +61,8 @@
+diff -ur orig/kernel/sys.c linux-source-5.4.0/kernel/sys.c
+--- orig/kernel/sys.c
++++ linux-source-5.4.0/kernel/sys.c
+@@ -60,6 +60,8 @@
+ #include <linux/rcupdate.h>
  #include <linux/uidgid.h>
  #include <linux/cred.h>
- 
++ 
 +#include <linux/random.h>
-+
+ 
  #include <linux/nospec.h>
  
- #include <linux/kmsg_dump.h>
-@@ -2228,6 +2230,280 @@
+@@ -2243,6 +2245,290 @@
  	return error;
  }
  
++ 
 +static inline unsigned char ipmon_is_unchecked_syscall(unsigned char *mask, unsigned long syscall_no)
 +{
 +  unsigned long no_to_byte, bit_in_byte;
@@ -526,7 +535,7 @@ diff --color -ruN linux-source-5.4.0/kernel/sys.c custom-linux-source-5.4.0/kern
  #ifdef CONFIG_CHECKPOINT_RESTORE
  static int prctl_get_tid_address(struct task_struct *me, int __user **tid_addr)
  {
-@@ -2496,6 +2744,9 @@
+@@ -2511,6 +2797,9 @@
  			return -EINVAL;
  		error = GET_TAGGED_ADDR_CTRL();
  		break;
@@ -536,59 +545,21 @@ diff --color -ruN linux-source-5.4.0/kernel/sys.c custom-linux-source-5.4.0/kern
  	default:
  		error = -EINVAL;
  		break;
-diff -ur orig/mm/mmap.c linux-source-5.4.0/mm/mmap.c
---- orig/mm/mmap.c	2023-01-09 15:21:00.373778461 +0100
-+++ linux-source-5.4.0/mm/mmap.c	2022-11-23 21:19:00.000000000 +0100
-@@ -132,7 +132,6 @@
- 	/* remove_protection_ptes reads vma->vm_page_prot without mmap_sem */
- 	WRITE_ONCE(vma->vm_page_prot, vm_page_prot);
+diff -ur orig/mm/interval_tree.c linux-source-5.4.0/mm/interval_tree.c
+--- orig/mm/interval_tree.c
++++ linux-source-5.4.0/mm/interval_tree.c
+@@ -57,6 +57,7 @@
+ 	rb_insert_augmented(&node->shared.rb, &root->rb_root,
+ 			    &vma_interval_tree_augment);
  }
-+EXPORT_SYMBOL(vma_set_page_prot);
++EXPORT_SYMBOL(vma_interval_tree_insert_after);
  
- /*
-  * Requires inode->i_mapping->i_mmap_rwsem
-@@ -609,7 +608,6 @@
- 	vma_gap_update(vma);
- 	vma_rb_insert(vma, &mm->mm_rb);
- }
-+EXPORT_SYMBOL(__vma_link_rb);
- 
- static void __vma_link_file(struct vm_area_struct *vma)
+ static inline unsigned long avc_start_pgoff(struct anon_vma_chain *avc)
  {
-@@ -2862,7 +2860,6 @@
- 
- 	return downgrade ? 1 : 0;
- }
-+EXPORT_SYMBOL(__do_munmap);
- 
- int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	      struct list_head *uf)
-diff -ur orig/mm/rmap.c linux-source-5.4.0/mm/rmap.c
---- orig/mm/rmap.c	2022-06-22 17:00:11.000000000 +0200
-+++ linux-source-5.4.0/mm/rmap.c	2022-07-28 14:35:57.184581365 +0200
-@@ -373,6 +373,7 @@
- 	unlink_anon_vmas(vma);
- 	return -ENOMEM;
- }
-+EXPORT_SYMBOL(anon_vma_fork);
- 
- void unlink_anon_vmas(struct vm_area_struct *vma)
- {
-diff -ur orig/arch/x86/mm/tlb.c linux-source-5.4.0/arch/x86/mm/tlb.c 
---- orig/arch/x86/mm/tlb.c	2023-01-09 14:49:50.596258910 +0100
-+++ linux-source-5.4.0/arch/x86/mm/tlb.c	2022-11-23 21:19:00.000000000 +0100
-@@ -806,7 +806,6 @@
- 	put_flush_tlb_info();
- 	put_cpu();
- }
-+EXPORT_SYMBOL(flush_tlb_mm_range);
- 
- 
- static void do_flush_tlb_all(void *info)
-diff -ur orig/mm/memory.c linux-source-5.4.0/mm/memory.c 
---- orig/mm/memory.c	2023-01-09 14:50:16.096260703 +0100
-+++ linux-source-5.4.0/mm/memory.c	2022-11-23 21:19:00.000000000 +0100
-@@ -1012,7 +1012,6 @@
+diff -ur orig/mm/memory.c linux-source-5.4.0/mm/memory.c
+--- orig/mm/memory.c
++++ linux-source-5.4.0/mm/memory.c
+@@ -1012,6 +1012,7 @@
  		mmu_notifier_invalidate_range_end(&range);
  	return ret;
  }
@@ -596,10 +567,37 @@ diff -ur orig/mm/memory.c linux-source-5.4.0/mm/memory.c
  
  /* Whether we should zap all COWed (private) pages too */
  static inline bool should_zap_cows(struct zap_details *details)
-diff -u build/mm/mprotect.c linux-source-5.4.0/mm/mprotect.c 
---- build/mm/mprotect.c	2023-01-09 15:21:18.085799104 +0100
-+++ linux-source-5.4.0/mm/mprotect.c	2022-11-23 21:19:00.000000000 +0100
-@@ -327,7 +327,6 @@
+diff -ur orig/mm/mmap.c linux-source-5.4.0/mm/mmap.c
+--- orig/mm/mmap.c
++++ linux-source-5.4.0/mm/mmap.c
+@@ -132,6 +132,7 @@
+ 	/* remove_protection_ptes reads vma->vm_page_prot without mmap_sem */
+ 	WRITE_ONCE(vma->vm_page_prot, vm_page_prot);
+ }
++EXPORT_SYMBOL(vma_set_page_prot);
+ 
+ /*
+  * Requires inode->i_mapping->i_mmap_rwsem
+@@ -608,6 +609,7 @@
+ 	vma_gap_update(vma);
+ 	vma_rb_insert(vma, &mm->mm_rb);
+ }
++EXPORT_SYMBOL(__vma_link_rb);
+ 
+ static void __vma_link_file(struct vm_area_struct *vma)
+ {
+@@ -2865,6 +2867,7 @@
+ 
+ 	return downgrade ? 1 : 0;
+ }
++EXPORT_SYMBOL(__do_munmap);
+ 
+ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	      struct list_head *uf)
+diff -ur orig/mm/mprotect.c linux-source-5.4.0/mm/mprotect.c
+--- orig/mm/mprotect.c
++++ linux-source-5.4.0/mm/mprotect.c
+@@ -327,6 +327,7 @@
  
  	return pages;
  }
@@ -607,25 +605,25 @@ diff -u build/mm/mprotect.c linux-source-5.4.0/mm/mprotect.c
  
  unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
  		       unsigned long end, pgprot_t newprot,
-diff -ur orig/mm/interval_tree.c linux-source-5.4.0/mm/interval_tree.c
---- orig/mm/interval_tree.c    2023-01-24 17:04:29.471654623 +0100
-+++ linux-source-5.4.0/mm/interval_tree.c  2023-01-24 17:05:32.064768057 +0100
-@@ -57,6 +57,7 @@
-        rb_insert_augmented(&node->shared.rb, &root->rb_root,
-                            &vma_interval_tree_augment);
- }
-+EXPORT_SYMBOL(vma_interval_tree_insert_after);
- 
- static inline unsigned long avc_start_pgoff(struct anon_vma_chain *avc)
- {
 diff -ur orig/mm/prfile.c linux-source-5.4.0/mm/prfile.c
---- orig/mm/prfile.c   2023-01-24 17:04:27.280645615 +0100
-+++ linux-source-5.4.0/mm/prfile.c 2023-01-24 17:05:16.215801167 +0100
+--- orig/mm/prfile.c
++++ linux-source-5.4.0/mm/prfile.c
 @@ -53,6 +53,7 @@
-        if (f && pr)
-                get_file(pr);
+ 	if (f && pr)
+ 		get_file(pr);
  }
 +EXPORT_SYMBOL(vma_do_get_file);
  
  void vma_do_fput(struct vm_area_struct *vma, const char func[], int line)
+ {
+diff -ur orig/mm/rmap.c linux-source-5.4.0/mm/rmap.c
+--- orig/mm/rmap.c
++++ linux-source-5.4.0/mm/rmap.c
+@@ -381,6 +381,7 @@
+ 	unlink_anon_vmas(vma);
+ 	return -ENOMEM;
+ }
++EXPORT_SYMBOL(anon_vma_fork);
+ 
+ void unlink_anon_vmas(struct vm_area_struct *vma)
  {
