@@ -175,7 +175,7 @@ function nginx-scan-benchmark
     mkdir -p "$__output_dir/$__connections-connections" || true
 
     logf "building nginx binaries with heap scanning ($1)"
-    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./build.sh $1 --ngx-split --pmvee-single-scanning --mappings-single-scanning --base 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-single-scanning --mappings-single-scanning --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib-scanning 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -199,7 +199,7 @@ function nginx-scan-benchmark
     orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-remon-withipmon"
     server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-pmvee-withipmon"
 
-    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./build.sh $1 --ngx-split --pmvee-extra --mappings-single 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-extra --mappings-single 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -221,7 +221,7 @@ function nginx-diffed-benchmark
     mkdir -p "$__output_dir/$__connections-connections" || true
 
     logf "building nginx binaries with diffed handling ($1)"
-    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./build.sh $1 --ngx-split --pmvee-single --mappings-single  --base 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-single --mappings-single  --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -253,7 +253,7 @@ function nginx-benchmark
     mkdir -p "$__output_dir/$__connections-connections" || true
 
     logf "building nginx binaries ($1)"
-    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./build.sh $1 --pmvee-stubs --pmvee --mappings --base 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --pmvee-stubs --pmvee --mappings --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -282,7 +282,7 @@ function nginx-benchmark
 function lighttpd-benchmark
 {
     logf "building lighttpd binaries ($1)"
-    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./build.sh $1 --base --pmvee --mappings 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --base --pmvee --mappings 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -739,11 +739,17 @@ do
             shift
             ;;
         --paper)
-            set_merge_skip_shorter_pmd_kernel
-            __kernel_module="merge-pmd-shorter-skip"
-
             set_no_allocator
             __allocator="none"
+
+            set_merge_skip_pmd_kernel
+            __kernel_module="merge-pmd-skip"
+
+            mapping-count-benchmark
+            switcheroo-benchmark
+
+            set_merge_skip_shorter_pmd_kernel
+            __kernel_module="merge-pmd-shorter-skip"
 
             mapping-count-benchmark
             switcheroo-benchmark
@@ -765,6 +771,9 @@ do
 
             nginx-benchmark "--ngx-split" ""     4
             lighttpd-benchmark "--faster"  "faster"
+
+            set_pmvee_allocator
+            __allocator="pmvee"
 
             shift
             ;;
