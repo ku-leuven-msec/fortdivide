@@ -19,7 +19,7 @@ do_make ()
   ln -fs "$__this_dir/cert/*" "$__prefix/conf/"
   ln -fs "$__this_dir/conf/nginx.conf" "$__prefix/conf/"
 
-  cp $__this_dir/../pmvee_config/index.html* $__prefix/html/
+  cp $__this_dir/../pmvee_config/index.html $__prefix/html/
 }
 
 

@@ -86,6 +86,7 @@ if [ ! -e lighttpd-1.4.60 ]
 then
     git clone https://git.lighttpd.net/lighttpd/lighttpd1.4.git lighttpd-1.4.60
     cd lighttpd-1.4.60
+    ./autogen.sh
     git checkout lighttpd-1.4.60
     patch -d ./ -p 2 < ../patches/lighttpd-1.4.60.patch
     ln -fs ../build_scripts/lighttpd-1.4.60-build.sh ./
