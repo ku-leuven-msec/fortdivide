@@ -232,7 +232,7 @@ else()
                 )
         else()
                 target_link_libraries(mvee PRIVATE
-                        ${CMAKE_SOURCE_DIR}/deps/jsoncpp/build/src/lib_json/libjsoncpp.a
+                        ${CMAKE_SOURCE_DIR}/deps/jsoncpp/build/src/lib_json/libjsoncpp_static.a
                         ${CMAKE_SOURCE_DIR}/deps/libdwarf/libdwarf/.libs/libdwarf.a
                         ${CMAKE_SOURCE_DIR}/deps/libelf/lib/libelf.a
                         ${CMAKE_SOURCE_DIR}/deps/binutils/build-tree/zlib/libz.a
