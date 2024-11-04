@@ -11,6 +11,25 @@ diff -ur orig/arch/x86/entry/syscalls/syscall_64.tbl linux-source-5.4.0/arch/x86
  512	x32	rt_sigaction		__x32_compat_sys_rt_sigaction
  513	x32	rt_sigreturn		sys32_x32_rt_sigreturn
  514	x32	ioctl			__x32_compat_sys_ioctl
+diff -ur orig/arch/x86/mm/pat.c linux-source-5.4.0/arch/x86/mm/pat.c
+--- orig/arch/x86/mm/pat.c
++++ linux-source-5.4.0/arch/x86/mm/pat.c
+@@ -1010,6 +1010,7 @@
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(track_pfn_copy);
+ 
+ /*
+  * prot is passed in as a parameter for the new mapping. If the vma has
+@@ -1094,6 +1095,7 @@
+ 	if (vma)
+ 		vma->vm_flags &= ~VM_PAT;
+ }
++EXPORT_SYMBOL(untrack_pfn);
+ 
+ /*
+  * untrack_pfn_moved is called, while mremapping a pfnmap for a new region,
 diff -ur orig/arch/x86/mm/tlb.c linux-source-5.4.0/arch/x86/mm/tlb.c
 --- orig/arch/x86/mm/tlb.c
 +++ linux-source-5.4.0/arch/x86/mm/tlb.c
@@ -187,7 +206,15 @@ diff -ur orig/include/uapi/linux/prctl.h linux-source-5.4.0/include/uapi/linux/p
 diff -ur orig/kernel/events/uprobes.c linux-source-5.4.0/kernel/events/uprobes.c
 --- orig/kernel/events/uprobes.c
 +++ linux-source-5.4.0/kernel/events/uprobes.c
-@@ -1568,11 +1568,13 @@
+@@ -1443,6 +1443,7 @@
+ 	if (vma_has_uprobes(vma, start, end))
+ 		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
+ }
++EXPORT_SYMBOL(uprobe_munmap);
+ 
+ /* Slot allocation for XOL */
+ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+@@ -1568,11 +1569,13 @@
  {
  	percpu_down_read(&dup_mmap_sem);
  }
@@ -201,7 +228,7 @@ diff -ur orig/kernel/events/uprobes.c linux-source-5.4.0/kernel/events/uprobes.c
  
  void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
  {
-@@ -1582,6 +1584,7 @@
+@@ -1582,6 +1585,7 @@
  		set_bit(MMF_RECALC_UPROBES, &newmm->flags);
  	}
  }
@@ -220,7 +247,15 @@ diff -ur orig/kernel/fork.c linux-source-5.4.0/kernel/fork.c
  
  void vm_area_free(struct vm_area_struct *vma)
  {
-@@ -1887,6 +1888,11 @@
+@@ -967,6 +968,7 @@
+ }
+ 
+ __cacheline_aligned_in_smp DEFINE_SPINLOCK(mmlist_lock);
++EXPORT_SYMBOL(mmlist_lock);
+ 
+ static unsigned long default_dump_filter = MMF_DUMP_FILTER_DEFAULT;
+ 
+@@ -1887,6 +1889,11 @@
  	if (!p)
  		goto fork_out;
  
@@ -559,7 +594,23 @@ diff -ur orig/mm/interval_tree.c linux-source-5.4.0/mm/interval_tree.c
 diff -ur orig/mm/memory.c linux-source-5.4.0/mm/memory.c
 --- orig/mm/memory.c
 +++ linux-source-5.4.0/mm/memory.c
-@@ -1012,6 +1012,7 @@
+@@ -167,6 +167,7 @@
+ 	}
+ 	current->rss_stat.events = 0;
+ }
++EXPORT_SYMBOL(sync_mm_rss);
+ 
+ static void add_mm_counter_fast(struct mm_struct *mm, int member, int val)
+ {
+@@ -637,6 +638,7 @@
+ out:
+ 	return pfn_to_page(pfn);
+ }
++EXPORT_SYMBOL(vm_normal_page);
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+@@ -1012,6 +1014,7 @@
  		mmu_notifier_invalidate_range_end(&range);
  	return ret;
  }
@@ -594,6 +645,65 @@ diff -ur orig/mm/mmap.c linux-source-5.4.0/mm/mmap.c
  
  int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
  	      struct list_head *uf)
+diff -ur orig/mm/mmu_gather.c linux-source-5.4.0/mm/mmu_gather.c
+--- orig/mm/mmu_gather.c
++++ linux-source-5.4.0/mm/mmu_gather.c
+@@ -88,6 +88,7 @@
+ 
+ 	return false;
+ }
++EXPORT_SYMBOL(__tlb_remove_page_size);
+ 
+ #endif /* HAVE_MMU_GATHER_NO_GATHER */
+ 
+@@ -195,6 +196,7 @@
+ 	tlb_flush_mmu_tlbonly(tlb);
+ 	tlb_flush_mmu_free(tlb);
+ }
++EXPORT_SYMBOL(tlb_flush_mmu);
+ 
+ /**
+  * tlb_gather_mmu - initialize an mmu_gather structure for page-table tear-down
+@@ -235,6 +237,7 @@
+ 	__tlb_reset_range(tlb);
+ 	inc_tlb_flush_pending(tlb->mm);
+ }
++EXPORT_SYMBOL(tlb_gather_mmu);
+ 
+ /**
+  * tlb_finish_mmu - finish an mmu_gather structure
+@@ -281,3 +284,4 @@
+ #endif
+ 	dec_tlb_flush_pending(tlb->mm);
+ }
++EXPORT_SYMBOL(tlb_finish_mmu);
+diff -ur orig/mm/mmu_notifier.c linux-source-5.4.0/mm/mmu_notifier.c
+--- orig/mm/mmu_notifier.c
++++ linux-source-5.4.0/mm/mmu_notifier.c
+@@ -189,6 +189,7 @@
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(__mmu_notifier_invalidate_range_start);
+ 
+ void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *range,
+ 					 bool only_end)
+@@ -227,6 +228,7 @@
+ 	srcu_read_unlock(&srcu, id);
+ 	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
+ }
++EXPORT_SYMBOL(__mmu_notifier_invalidate_range_end);
+ 
+ void __mmu_notifier_invalidate_range(struct mm_struct *mm,
+ 				  unsigned long start, unsigned long end)
+@@ -241,6 +243,7 @@
+ 	}
+ 	srcu_read_unlock(&srcu, id);
+ }
++EXPORT_SYMBOL(__mmu_notifier_invalidate_range);
+ 
+ /*
+  * Same as mmu_notifier_register but here the caller must hold the
 diff -ur orig/mm/mprotect.c linux-source-5.4.0/mm/mprotect.c
 --- orig/mm/mprotect.c
 +++ linux-source-5.4.0/mm/mprotect.c
@@ -605,6 +715,38 @@ diff -ur orig/mm/mprotect.c linux-source-5.4.0/mm/mprotect.c
  
  unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
  		       unsigned long end, pgprot_t newprot,
+diff -ur orig/mm/pgtable-generic.c linux-source-5.4.0/mm/pgtable-generic.c
+--- orig/mm/pgtable-generic.c
++++ linux-source-5.4.0/mm/pgtable-generic.c
+@@ -23,24 +23,28 @@
+ 	pgd_ERROR(*pgd);
+ 	pgd_clear(pgd);
+ }
++EXPORT_SYMBOL(pgd_clear_bad);
+ 
+ void p4d_clear_bad(p4d_t *p4d)
+ {
+ 	p4d_ERROR(*p4d);
+ 	p4d_clear(p4d);
+ }
++EXPORT_SYMBOL(p4d_clear_bad);
+ 
+ void pud_clear_bad(pud_t *pud)
+ {
+ 	pud_ERROR(*pud);
+ 	pud_clear(pud);
+ }
++EXPORT_SYMBOL(pud_clear_bad);
+ 
+ void pmd_clear_bad(pmd_t *pmd)
+ {
+ 	pmd_ERROR(*pmd);
+ 	pmd_clear(pmd);
+ }
++EXPORT_SYMBOL(pmd_clear_bad);
+ 
+ #ifndef __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
+ /*
 diff -ur orig/mm/prfile.c linux-source-5.4.0/mm/prfile.c
 --- orig/mm/prfile.c
 +++ linux-source-5.4.0/mm/prfile.c
@@ -627,3 +769,60 @@ diff -ur orig/mm/rmap.c linux-source-5.4.0/mm/rmap.c
  
  void unlink_anon_vmas(struct vm_area_struct *vma)
  {
+@@ -1347,6 +1348,7 @@
+ 	 * faster for those pages still in swapcache.
+ 	 */
+ }
++EXPORT_SYMBOL(page_remove_rmap);
+ 
+ /*
+  * @arg: enum ttu_flags will be passed to this argument
+diff -ur orig/mm/swap.c linux-source-5.4.0/mm/swap.c
+--- orig/mm/swap.c
++++ linux-source-5.4.0/mm/swap.c
+@@ -689,6 +689,7 @@
+ 	lru_add_drain_cpu(get_cpu());
+ 	put_cpu();
+ }
++EXPORT_SYMBOL(lru_add_drain);
+ 
+ #ifdef CONFIG_SMP
+ 
+diff -ur orig/mm/swapfile.c linux-source-5.4.0/mm/swapfile.c
+--- orig/mm/swapfile.c
++++ linux-source-5.4.0/mm/swapfile.c
+@@ -1768,6 +1768,7 @@
+ 	}
+ 	return p != NULL;
+ }
++EXPORT_SYMBOL(free_swap_and_cache);
+ 
+ #ifdef CONFIG_HIBERNATION
+ /*
+@@ -3491,6 +3492,7 @@
+ 		err = add_swap_count_continuation(entry, GFP_ATOMIC);
+ 	return err;
+ }
++EXPORT_SYMBOL(swap_duplicate);
+ 
+ /*
+  * @entry: swap entry for which we allocate swap cache.
+@@ -3649,6 +3651,7 @@
+ 		__free_page(page);
+ 	return ret;
+ }
++EXPORT_SYMBOL(add_swap_count_continuation);
+ 
+ /*
+  * swap_count_continued - when the original swap_map count is incremented
+diff -ur orig/mm/util.c linux-source-5.4.0/mm/util.c
+--- orig/mm/util.c
++++ linux-source-5.4.0/mm/util.c
+@@ -660,6 +660,7 @@
+ 	page = compound_head(page);
+ 	return __page_rmapping(page);
+ }
++EXPORT_SYMBOL(page_rmapping);
+ 
+ /*
+  * Return true if this page is mapped into pagetables.
