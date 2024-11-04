@@ -43,7 +43,7 @@ cd ../
 
 ./bootstrap.sh
 cd build/
-make enable-ipmon-pmvee && ake block-shm && make benchmark && make -j 1>/dev/null
+make enable-ipmon-pmvee && make block-shm && make benchmark && make -j 1>/dev/null
 cd ../
 
 cd eurosp2025/
