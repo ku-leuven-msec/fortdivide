@@ -789,3 +789,5 @@ mkdir -p "$__output_dir_base/$__today_output_dir/" || true
 mkdir -p "$__output_dir_base/latest/" || true
 cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/$__today_output_dir/"
 cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/latest/"
+
+$__benchmark_dir/process.py "$__output_dir_base/latest/"
