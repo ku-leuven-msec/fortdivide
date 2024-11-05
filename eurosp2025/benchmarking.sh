@@ -458,8 +458,8 @@ function server-micro-benchmark
 
 function set_pmvee_allocator
 {
-    execute_and_wait "cd $__benchmark_dir/allocator/ && make -B all"
-    __pmvee_ld_preload="LD_PRELOAD=$__benchmark_dir/allocator/pmvee_allocator.so"
+    execute_and_wait "cd $__remon_dir/PMVEE/allocator/ && make -B all"
+    __pmvee_ld_preload="LD_PRELOAD=$__remon_dir/PMVEE/allocator/pmvee_allocator.so"
 
     execute_and_wait "sed -r -i 's/#if 1 \/\/ ifdef PMVEE_LIBC_MP_HEAP/#ifdef PMVEE_LIBC_MP_HEAP/g' $__remon_glibc_dir/malloc/malloc.c"
     execute_and_wait "sed -r -i 's/#if 1 \/\/ ifdef PMVEE_LIBC_MP_HEAP/#ifdef PMVEE_LIBC_MP_HEAP/g' $__remon_glibc_dir/malloc/arena.c"
