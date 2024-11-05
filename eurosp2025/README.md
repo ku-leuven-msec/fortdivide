@@ -19,6 +19,7 @@ cd eurosp2025/
 
 # Run benchmarks, specifically those in the paper.
 # This, again, requires a password a few times to switch out the kernel module.
+# Not that this benchmark script is set up to be able to run from a remote host, and thus uses ssh to execute more commands.
 ./benchmarking.sh --paper
 ```
 

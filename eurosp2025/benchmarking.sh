@@ -5,18 +5,18 @@ __allocator="pmvee"
 __kernel_module="skip"
 __execute_pre=""
 
-__orig_remon_dir="##fortdivide_location##/"
+__orig_remon_dir="/home/jonas/repos/fortdivide-test/"
 __orig_remon_exec_dir="$__orig_remon_dir/MVEE/bin/Release/"
 
-__remon_dir="##fortdivide_location##/"
-__remon_exec_dir="##fortdivide_location##/MVEE/bin/Release/"
-__remon_glibc_dir="##fortdivide_location##/eurosp2025/ReMon-glibc/"
-__benchmark_dir="##fortdivide_location##/eurosp2025/"
+__remon_dir="/home/jonas/repos/fortdivide-test/"
+__remon_exec_dir="/home/jonas/repos/fortdivide-test/MVEE/bin/Release/"
+__remon_glibc_dir="/home/jonas/repos/fortdivide-test/eurosp2025/ReMon-glibc/"
+__benchmark_dir="/home/jonas/repos/fortdivide-test/eurosp2025/"
 __benchmark_dir_out="$__benchmark_dir/out/"
 
 __server_ip="localhost:8080"
 
-__pmvee_ld_preload="LD_PRELOAD=##fortdivide_location##/PMVEE/allocator/mine/pmvee_allocator.so"
+__pmvee_ld_preload="LD_PRELOAD=/home/jonas/repos/fortdivide-test/PMVEE/allocator/mine/pmvee_allocator.so"
 
 __sub_output_dir=$(date +"%Y-%m-%d-%T")
 __today_output_dir=$(date +"%Y-%m-%d")
@@ -790,4 +790,5 @@ mkdir -p "$__output_dir_base/latest/" || true
 cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/$__today_output_dir/"
 cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/latest/"
 
-$__benchmark_dir/process.py "$__output_dir_base/latest/"
+scp -r "$__output_dir_base/latest/" $__benchmark_dir/
+ssh -t fortdivide-benchmark $__benchmark_dir/process.py "$__benchmark_dir/latest/"
