@@ -1,4 +1,4 @@
-#include "./lib/stubs.h"
+#include "lib/stubs.h"
 
 #ifdef PMVEE_LEADER
 
@@ -16,7 +16,7 @@ __pointer = *(void**)(__pmvee_zone + *__pmvee_args_size);        \
 #endif
 
 void** pointer_data = (void**) 0;
-int* pointer_count = 0x42;
+int* pointer_count = (int*) 0x42;
 
 void pointer_test_migration(char* __pmvee_zone, size_t* __pmvee_args_size, void* origin)
 {

@@ -8,7 +8,7 @@ native: mapping_count.c dirs
 	clang -g -O3 -pie -fPIC -pthread -DFULL_NATIVE_RUNNING_SYNC -o ./bin/mapping_count_native_sync mapping_count.c
 
 pmvee: mapping_count.c dirs
-	../../../PMVEE/scripts/stub_builder_too_lazy_to_do_compiler_stuffz_dl.py  -i ./mapping_count.json -o ./lib/
+	../../../PMVEE/scripts/stub_builder_too_lazy_to_do_compiler_stuffz_dl.py -i ./mapping_count.json -o ./lib/
 
 	clang -g -I../../../PMVEE/ -DPMVEE_LEADER -DPMVEE_LIBC_COPY \
 	-L./lib/ -l:mapping_count_l.so -L../../../PMVEE/ -lpmvee    \
