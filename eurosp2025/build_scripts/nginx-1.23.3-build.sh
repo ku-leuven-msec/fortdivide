@@ -334,3 +334,7 @@ do
   esac
 done
 
+if [[ ! -e ../../patched_binaries/gnomelibs/amd64/nginx_l.so ]]
+then
+  ln -fs $(readlink -f ../pmvee_config/nginx-1.23.3/lib/nginx_l.so) ../../patched_binaries/gnomelibs/amd64/
+fi
