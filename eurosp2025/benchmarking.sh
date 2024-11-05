@@ -359,7 +359,7 @@ function switcheroo-benchmark
     mkdir -p "$__output_dir" || true
 
     logf "building switcheroo binaries"
-    execute_and_wait "cd $__benchmark_dir/microbenchmarks/switcheroo && make 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/microbenchmarks/switching && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
 
@@ -368,7 +368,7 @@ function switcheroo-benchmark
     execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
     for i in {1..5}
     do
-        execute_and_wait "cd $__benchmark_dir/microbenchmarks/switcheroo/bin/ && ./switcheroo_native >> /tmp/pmvee_temp_log_copy_later"
+        execute_and_wait "cd $__benchmark_dir/microbenchmarks/switching/bin/ && ./switcheroo_native >> /tmp/pmvee_temp_log_copy_later"
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/native
 
@@ -383,7 +383,7 @@ function switcheroo-benchmark
     # execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
     # for i in {1..5}
     # do
-    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switcheroo/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
+    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
     # done
     # scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee-micro
 # 
@@ -392,7 +392,7 @@ function switcheroo-benchmark
     # execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
     # for i in {1..5}
     # do
-    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switcheroo/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
+    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
     # done
     # scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee-ipmon-micro
 # 
@@ -408,7 +408,7 @@ function switcheroo-benchmark
     execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
     for i in {1..5}
     do
-        execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switcheroo/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
+        execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee
 
@@ -417,7 +417,7 @@ function switcheroo-benchmark
     execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
     for i in {1..5}
     do
-        execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switcheroo/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
+        execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee-ipmon
 }
