@@ -289,7 +289,7 @@ diff -ur orig/kernel/sys.c linux-source-5.4.0/kernel/sys.c
 +  unsigned long no_to_byte, bit_in_byte;
 +
 +  /* This is not very concise but the compiler will optimize it anyway... */
-+  if (syscall_no > ROUND_UP(__NR_syscalls, 8))
++  if (syscall_no > ROUND_UP(__NR_pmvee_check, 8))
 +    return 0;
 +
 +  no_to_byte  = syscall_no / 8;
@@ -304,7 +304,7 @@ diff -ur orig/kernel/sys.c linux-source-5.4.0/kernel/sys.c
 +{
 +  unsigned long no_to_byte, bit_in_byte;
 +
-+  if (syscall_no > ROUND_UP(__NR_syscalls, 8))
++  if (syscall_no > ROUND_UP(__NR_pmvee_check, 8))
 +    return;
 +
 +  no_to_byte  = syscall_no / 8;
@@ -435,7 +435,7 @@ diff -ur orig/kernel/sys.c linux-source-5.4.0/kernel/sys.c
 +{
 +	int error = 0;
 +	struct vm_area_struct *ipmon_vma = NULL, *ipmon_rb_vma = NULL;
-+	unsigned long kernel_syscall_mask_size = ROUND_UP(__NR_syscalls, 8) / 8;
++	unsigned long kernel_syscall_mask_size = ROUND_UP(__NR_pmvee_check, 8) / 8;
 +	unsigned char syscall_mask_copy[kernel_syscall_mask_size];
 +	unsigned char syscall_mask_check[kernel_syscall_mask_size];
 +	unsigned long program_counter;
