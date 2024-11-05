@@ -5,18 +5,18 @@ __allocator="pmvee"
 __kernel_module="skip"
 __execute_pre=""
 
-__orig_remon_dir="/home/jonas/repos/fortdivide-test/"
+__orig_remon_dir="##fortdivide_location##/"
 __orig_remon_exec_dir="$__orig_remon_dir/MVEE/bin/Release/"
 
-__remon_dir="/home/jonas/repos/fortdivide-test/"
-__remon_exec_dir="/home/jonas/repos/fortdivide-test/MVEE/bin/Release/"
-__remon_glibc_dir="/home/jonas/repos/fortdivide-test/eurosp2025/ReMon-glibc/"
-__benchmark_dir="/home/jonas/repos/fortdivide-test/eurosp2025/"
+__remon_dir="##fortdivide_location##/"
+__remon_exec_dir="##fortdivide_location##/MVEE/bin/Release/"
+__remon_glibc_dir="##fortdivide_location##/eurosp2025/ReMon-glibc/"
+__benchmark_dir="##fortdivide_location##/eurosp2025/"
 __benchmark_dir_out="$__benchmark_dir/out/"
 
 __server_ip="localhost:8080"
 
-__pmvee_ld_preload="LD_PRELOAD=/home/jonas/repos/fortdivide-test/PMVEE/allocator/mine/pmvee_allocator.so"
+__pmvee_ld_preload="LD_PRELOAD=##fortdivide_location##/PMVEE/allocator/pmvee_allocator.so"
 
 __sub_output_dir=$(date +"%Y-%m-%d-%T")
 __today_output_dir=$(date +"%Y-%m-%d")
@@ -458,8 +458,8 @@ function server-micro-benchmark
 
 function set_pmvee_allocator
 {
-    execute_and_wait "cd $__benchmark_dir/allocator/mine/ && make -B all"
-    __pmvee_ld_preload="LD_PRELOAD=$__benchmark_dir/allocator/mine/pmvee_allocator.so"
+    execute_and_wait "cd $__benchmark_dir/allocator/ && make -B all"
+    __pmvee_ld_preload="LD_PRELOAD=$__benchmark_dir/allocator/pmvee_allocator.so"
 
     execute_and_wait "sed -r -i 's/#if 1 \/\/ ifdef PMVEE_LIBC_MP_HEAP/#ifdef PMVEE_LIBC_MP_HEAP/g' $__remon_glibc_dir/malloc/malloc.c"
     execute_and_wait "sed -r -i 's/#if 1 \/\/ ifdef PMVEE_LIBC_MP_HEAP/#ifdef PMVEE_LIBC_MP_HEAP/g' $__remon_glibc_dir/malloc/arena.c"
