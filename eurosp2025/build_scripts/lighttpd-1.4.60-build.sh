@@ -24,11 +24,11 @@ do_make ()
   cp "../pmvee_config/lighttpd.conf.in" "../out/$__this/$1/base/conf/test.conf"
   cp ../pmvee_config/index.html "../out/$__this/$1/base/www/htdocs/"
 
-  # sed -i "s/SET_LOG_ROOT/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/log/"    "../out/$__this/$1/base/conf/test.conf"
-  # sed -i "s/SET_SERVER_ROOT/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/www/" "../out/$__this/$1/base/conf/test.conf"
-  # sed -i "s/SET_STATE_DIR/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/run/"   "../out/$__this/$1/base/conf/test.conf"
-  # sed -i "s/SET_HOME_DIR/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base/"         "../out/$__this/$1/base/conf/test.conf"
-  # sed -i "s/SET_CONF_DIR/\/home\/hello\/repos\/pmvee-benchmarks\/out\/$__this\/base\/conf/"   "../out/$__this/$1/base/conf/test.conf"
+  sed -i "s#SET_LOG_ROOT#$__this_dir/../out/$__this/base/log#g"    "../out/$__this/$1/base/conf/test.conf"
+  sed -i "s#SET_SERVER_ROOT#$__this_dir/../out/$__this/base/www#g" "../out/$__this/$1/base/conf/test.conf"
+  sed -i "s#SET_STATE_DIR#$__this_dir/../out/$__this/base/run#g"   "../out/$__this/$1/base/conf/test.conf"
+  sed -i "s#SET_HOME_DIR#$__this_dir/../out/$__this/base#g"         "../out/$__this/$1/base/conf/test.conf"
+  sed -i "s#SET_CONF_DIR#$__this_dir/../out/$__this/base/conf#g"   "../out/$__this/$1/base/conf/test.conf"
 }
 
 # Common flags: Wrap atomics
@@ -60,7 +60,7 @@ do
 
       "$__pmvee_dir"/scripts/get_libc_line.sh >> ./mappings.pmvee
 
-      ln -fs $(readlink -f ./mappings.pmvee) ../profiling/mappings.pmvee
+      ln -fs $(readlink -f ./mappings.pmvee) ../pmvee_config/mappings.pmvee
 
       shift
       ;;
