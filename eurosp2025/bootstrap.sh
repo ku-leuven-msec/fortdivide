@@ -43,7 +43,14 @@ cd ../
 
 ./bootstrap.sh
 cd build/
+patch -p 2 -d ./ < ../eurosys2022-artifact/benchmarks/patches/ipmon-nginx.patch
+make block-shm && make benchmark && make -j 1>/dev/null
+cp ../IP-MON/libipmon.so ../IP-MON/libipmon-nginx.so
+patch -R -p 2 -d ./ < ../eurosys2022-artifact/benchmarks/patches/ipmon-nginx.patch
+make block-shm && make benchmark && make -j 1>/dev/null
+cp ../IP-MON/libipmon.so ../IP-MON/libipmon-default.so
 make enable-ipmon-pmvee && make block-shm && make benchmark && make -j 1>/dev/null
+cp ../IP-MON/libipmon.so ../IP-MON/libipmon-pmvee.so
 cd ../
 
 cd eurosp2025/

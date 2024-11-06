@@ -282,7 +282,7 @@ function nginx-benchmark
 function lighttpd-benchmark
 {
     logf "building lighttpd binaries ($1)"
-    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --base --pmvee --mappings 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --pmvee --mappings --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
 
