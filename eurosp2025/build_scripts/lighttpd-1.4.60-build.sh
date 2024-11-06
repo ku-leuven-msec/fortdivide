@@ -60,7 +60,7 @@ do
 
       "$__pmvee_dir"/scripts/get_libc_line.sh >> ./mappings.pmvee
 
-      ln -fs $(readlink -f ./mappings.pmvee) ../profiling/mappings.pmvee
+      ln -fs $(readlink -f ./mappings.pmvee) ../pmvee_config/mappings.pmvee
 
       shift
       ;;
