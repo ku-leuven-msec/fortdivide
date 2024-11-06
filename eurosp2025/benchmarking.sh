@@ -185,24 +185,28 @@ function nginx-scan-benchmark
     execute_and_wait "sed -i 's/worker_processes.*/worker_processes $3;/g' $__benchmark_dir/nginx-1.23.3/conf/nginx.conf"
 
     __ld_preload=$__pmvee_ld_preload
-    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-baseline"
+    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-scan-$3-baseline"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
-    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-remon-noipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-pmvee-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-scan-$3-remon-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-scan-$3-pmvee-noipmon"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__orig_remon_exec_dir/MVEE.ini"
-    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-remon-withipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-scan-$3-pmvee-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-scan-$3-remon-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-scan-$3-pmvee-withipmon"
 
     execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-extra --mappings-single 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
-    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-emulate-$2-$3-pmvee-noipmon"
@@ -223,7 +227,6 @@ function nginx-diffed-benchmark
     logf "building nginx binaries with diffed handling ($1)"
     execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-single --mappings-single  --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
-    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
     logf "Outputting to $__output_dir"
 
@@ -231,19 +234,23 @@ function nginx-diffed-benchmark
     execute_and_wait "sed -i 's/worker_processes.*/worker_processes $3;/g' $__benchmark_dir/nginx-1.23.3/conf/nginx.conf"
 
     __ld_preload=$__pmvee_ld_preload
-    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-diffed-$3-baseline"
+    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-diffed-$3-baseline"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
-    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-diffed-$3-remon-noipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-diffed-$3-pmvee-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-diffed-$3-remon-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-diffed-$3-pmvee-noipmon"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__orig_remon_exec_dir/MVEE.ini"
-    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-diffed-$3-remon-withipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-diffed-$3-pmvee-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    orig-server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-diffed-$3-remon-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-diffed-$3-pmvee-withipmon"
 }
 
 
@@ -255,7 +262,6 @@ function nginx-benchmark
     logf "building nginx binaries ($1)"
     execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --pmvee-stubs --pmvee --mappings --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
-    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
     logf "Outputting to $__output_dir"
 
@@ -263,47 +269,56 @@ function nginx-benchmark
     execute_and_wait "sed -i 's/worker_processes.*/worker_processes $3;/g' $__benchmark_dir/nginx-1.23.3/conf/nginx.conf"
 
     __ld_preload=$__pmvee_ld_preload
-    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-$3-baseline"
+    nginx-base   "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-$3-baseline"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : true/\"use_ipmon\" : false/g' $__orig_remon_exec_dir/MVEE.ini"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-$3-remon-noipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/leader/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-$3-pmvee-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-$3-remon-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/leader/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-$3-pmvee-noipmon"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : false/\"use_ipmon\" : true/g' $__orig_remon_exec_dir/MVEE.ini"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-$3-remon-withipmon"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/leader/sbin/nginx" "$__output_dir/$__connections-connections/nginx-$2-$3-pmvee-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/base/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-$3-remon-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/leader/sbin/nginx" "$__output_dir/$__connections-connections/nginx$2-$3-pmvee-withipmon"
 }
 
 
 function lighttpd-benchmark
 {
+    execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building lighttpd binaries ($1)"
     execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --base --pmvee --mappings 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
-    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
 
     __output_dir="$__output_dir_base/$__sub_output_dir/$__kernel_module/$__allocator/"
     mkdir -p "$__output_dir/$__connections-connections" || true
     logf "Outputting to $__output_dir"
 
     __ld_preload=$__pmvee_ld_preload
-    server-bench-base "$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf" "$__output_dir/$__connections-connections/lighttpd-$2-baseline"
+    server-bench-base "$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf" "$__output_dir/$__connections-connections/lighttpd$2-baseline"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : true/\"use_ipmon\" : false/g' $__orig_remon_exec_dir/MVEE.ini"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd-$2-remon-noipmon"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd-$2-pmvee-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-noipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so  $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-pmvee-noipmon"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : false/\"use_ipmon\" : true/g' $__orig_remon_exec_dir/MVEE.ini"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd-$2-remon-withipmon"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd-$2-pmvee-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-withipmon"
+    execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so  $__orig_remon_dir/IP-MON/libipmon.so"
+    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-pmvee-withipmon"
 }
 
 
@@ -316,6 +331,7 @@ function mapping-count-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/mapping_count && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
     logf "Outputting to $__output_dir"
 
@@ -362,6 +378,7 @@ function switcheroo-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/switching && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
     logf "Outputting to $__output_dir"
 
@@ -372,37 +389,6 @@ function switcheroo-benchmark
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/native
 
-    # execute_and_wait "sed -r -i 's/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_syscalls_handlers.cpp"
-    # execute_and_wait "sed -r -i 's/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_monitor.cpp"
-    # execute_and_wait "sed -r -i 's/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_syscalls.cpp"
-    # execute_and_wait "sed -r -i 's/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/IP-MON/MVEE_ipmon.cpp"
-    # execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
-# 
-    # execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
-    # execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
-    # execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
-    # for i in {1..5}
-    # do
-    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
-    # done
-    # scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee-micro
-# 
-    # execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
-    # execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__orig_remon_exec_dir/MVEE.ini"
-    # execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
-    # for i in {1..5}
-    # do
-    #     execute_and_wait "cd $__remon_exec_dir && ./mvee -- $__benchmark_dir/microbenchmarks/switching/bin/switcheroo_pmvee >> /tmp/pmvee_temp_log_copy_later"
-    # done
-    # scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/pmvee-ipmon-micro
-# 
-# 
-    # execute_and_wait "sed -r -i 's/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_syscalls_handlers.cpp"
-    # execute_and_wait "sed -r -i 's/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_monitor.cpp"
-    # execute_and_wait "sed -r -i 's/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/MVEE/Src/MVEE_syscalls.cpp"
-    # execute_and_wait "sed -r -i 's/#if 0 \/\/ ifdef PMVEE_MICROBENCHMARK_ENTER_EXIT/#ifndef PMVEE_MICROBENCHMARK_ENTER_EXIT/g' $__remon_dir/IP-MON/MVEE_ipmon.cpp"
-    # execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
-# 
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
     execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
@@ -432,6 +418,7 @@ function server-micro-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/server_micro && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
     logf "Outputting to $__output_dir"
 
@@ -471,8 +458,9 @@ function set_pmvee_allocator
 
     logf "building ReMon for pmvee allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building ReMon-glibc for pmvee allocator"
-    execute_and_wait "cd $__remon_glibc_dir/build && make -j 1>/dev/null"
+    execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
 
 
@@ -495,8 +483,9 @@ function set_hardened_allocator
 
     logf "building ReMon for hardened allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building ReMon-glibc for hardened allocator"
-    execute_and_wait "cd $__remon_glibc_dir/build && make -j 1>/dev/null"
+    execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
 
 
@@ -513,8 +502,9 @@ function set_libc_allocator
 
     logf "building ReMon for libc allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building ReMon-glibc for libc allocator"
-    execute_and_wait "cd $__remon_glibc_dir/build && make -j 1>/dev/null"
+    execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
 
 
@@ -531,8 +521,9 @@ function set_no_allocator
 
     logf "building ReMon for no allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
+    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building ReMon-glibc for no allocator"
-    execute_and_wait "cd $__remon_glibc_dir/build && make -j 1>/dev/null"
+    execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
 
 
@@ -599,6 +590,7 @@ echo "" > $__log
 benchmark_on
 
 execute_and_wait "cd $__orig_remon_dir && ./scripts/switch_patched_binaries.sh ubuntu20 && cd build && make benchmark && make -j 1>/dev/null"
+cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
 execute_and_wait "killall nginx lighttpd mvee"
 while test $# -gt 0
@@ -691,7 +683,7 @@ do
             shift
             ;;
         --nginx)
-            nginx-benchmark "--ngx-full"  "full" 4
+            nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
             shift
             ;;
@@ -706,10 +698,10 @@ do
             ;;
         --servers-limited)
             __connections=1
-            nginx-benchmark "--ngx-full"  "full" 1
+            nginx-benchmark "--ngx-full"  "-full" 1
             nginx-benchmark "--ngx-split" ""     1
             __connections=4
-            nginx-benchmark "--ngx-full"  "full" 4
+            nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
             __connections=1
             lighttpd-benchmark "--default" "default"
@@ -719,18 +711,18 @@ do
             ;;
         --servers)
             # __connections=1
-            nginx-benchmark "--ngx-full"  "full" 1
+            nginx-benchmark "--ngx-full"  "-full" 1
             nginx-benchmark "--ngx-split" ""     1
-            nginx-diffed-benchmark "--ngx-full"  "full" 1
+            nginx-diffed-benchmark "--ngx-full"  "-full" 1
             nginx-diffed-benchmark "--ngx-split" ""     1
-            nginx-scan-benchmark "--ngx-full"  "full" 1
+            nginx-scan-benchmark "--ngx-full"  "-full" 1
             nginx-scan-benchmark "--ngx-split" ""     1
             # __connections=4
-            nginx-benchmark "--ngx-full"  "full" 4
+            nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
-            nginx-diffed-benchmark "--ngx-full"  "full" 4
+            nginx-diffed-benchmark "--ngx-full"  "-full" 4
             nginx-diffed-benchmark "--ngx-split" ""     4
-            nginx-scan-benchmark "--ngx-full"  "full" 4
+            nginx-scan-benchmark "--ngx-full"  "-full" 4
             nginx-scan-benchmark "--ngx-split" ""     4
             # __connections=1
             lighttpd-benchmark "--default" "default"
@@ -757,14 +749,14 @@ do
             set_pmvee_allocator
             __allocator="pmvee"
 
-            nginx-benchmark "--ngx-full"  "full" 4
+            nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
-            # nginx-diffed-benchmark "--ngx-full"  "full" 4
+            # nginx-diffed-benchmark "--ngx-full"  "-full" 4
             nginx-diffed-benchmark "--ngx-split" ""     4
-            # nginx-scan-benchmark "--ngx-full"  "full" 4
+            # nginx-scan-benchmark "--ngx-full"  "-full" 4
             nginx-scan-benchmark "--ngx-split" ""     4
-            lighttpd-benchmark "--default" "default"
-            lighttpd-benchmark "--faster"  "faster"
+            lighttpd-benchmark "--default" "-default"
+            lighttpd-benchmark "--faster"  "-faster"
 
             set_libc_allocator
             __allocator="libc"
