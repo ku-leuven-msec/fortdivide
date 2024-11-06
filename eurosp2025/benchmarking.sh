@@ -590,7 +590,6 @@ echo "" > $__log
 benchmark_on
 
 execute_and_wait "cd $__orig_remon_dir && ./scripts/switch_patched_binaries.sh ubuntu20 && cd build && make benchmark && make -j 1>/dev/null"
-cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
 execute_and_wait "killall nginx lighttpd mvee"
 while test $# -gt 0
