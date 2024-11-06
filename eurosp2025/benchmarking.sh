@@ -175,7 +175,7 @@ function nginx-scan-benchmark
     mkdir -p "$__output_dir/$__connections-connections" || true
 
     logf "building nginx binaries with heap scanning ($1)"
-    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --ngx-split --pmvee-single-scanning --mappings-single-scanning --base 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/nginx-1.23.3/ && ./nginx-1.23.3-build.sh $1 --pmvee-single-scanning --mappings-single-scanning --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib-scanning 1>/dev/null"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-nginx.so $__orig_remon_dir/IP-MON/libipmon.so"
 
@@ -349,6 +349,8 @@ function mapping-count-benchmark
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/native_sync
 
+    ssh -t fortdivide-benchmark $__remon_dir/eurosp2025/fortdivide-libc.sh
+
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
     execute_and_wait "echo "" > /tmp/pmvee_temp_log_copy_later"
@@ -388,6 +390,8 @@ function switcheroo-benchmark
         execute_and_wait "cd $__benchmark_dir/microbenchmarks/switching/bin/ && ./switcheroo_native >> /tmp/pmvee_temp_log_copy_later"
     done
     scp fortdivide-benchmark:/tmp/pmvee_temp_log_copy_later $__output_dir/native
+
+    ssh -t fortdivide-benchmark $__remon_dir/eurosp2025/fortdivide-libc.sh
 
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__orig_remon_exec_dir/MVEE.ini"
@@ -590,7 +594,6 @@ echo "" > $__log
 benchmark_on
 
 execute_and_wait "cd $__orig_remon_dir && ./scripts/switch_patched_binaries.sh ubuntu20 && cd build && make benchmark && make -j 1>/dev/null"
-cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
 
 execute_and_wait "killall nginx lighttpd mvee"
 while test $# -gt 0
