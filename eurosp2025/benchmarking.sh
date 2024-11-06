@@ -294,7 +294,7 @@ function lighttpd-benchmark
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
     cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
     logf "building lighttpd binaries ($1)"
-    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --base --pmvee --mappings 1>/dev/null"
+    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --pmvee --mappings --base 1>/dev/null"
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
 
     __output_dir="$__output_dir_base/$__sub_output_dir/$__kernel_module/$__allocator/"
