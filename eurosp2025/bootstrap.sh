@@ -110,8 +110,6 @@ sed -r -i "s.##fortdivide_location##.$(readlink -f ../).g" ./benchmarking.sh
 sed -r -i "s.##fortdivide_location##.$(readlink -f ../).g" ./pmvee_config/MVEE.ini.patch
 sed -r -i "s.##fortdivide_location##.$(readlink -f ../).g" ../PMVEE/scripts/stub_builder_too_lazy_to_do_compiler_stuffz_dl.py
 
-ln -fs $(readlink -f ./pmvee_config/nginx-1.23.3/lib/nginx_l.so) ../patched_binaries/gnomelibs/amd64/
-
 cd ../
 patch -d ./ -p 1 < eurosp2025/pmvee_config/MVEE.ini.patch
 
