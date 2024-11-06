@@ -144,7 +144,7 @@ do
 
       ln -fs $(readlink -f ./mappings.pmvee) ../pmvee_config/mappings.pmvee
       ln -fs $(readlink -f ./migrations.pmvee) ../pmvee_config/migrations.pmvee
-      "$__pmvee_dir"/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
+      "$__pmvee_dir"/scripts/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
 
       shift
       ;;
@@ -167,7 +167,7 @@ do
 
       ln -fs $(readlink -f ./mappings.pmvee) ../pmvee_config/mappings.pmvee
       ln -fs $(readlink -f ./migrations.pmvee) ../pmvee_config/migrations.pmvee
-      "$__pmvee_dir"/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
+      "$__pmvee_dir"/scripts/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
 
       ln -fs "$__old" "../pmvee_config/$__this/nginx.json"
 
@@ -205,7 +205,7 @@ do
 
       ln -fs $(readlink -f ./mappings.pmvee) ../pmvee_config/mappings.pmvee
       ln -fs $(readlink -f ./migrations.pmvee) ../pmvee_config/migrations.pmvee
-      "$__pmvee_dir"/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
+      "$__pmvee_dir"/scripts/process_migration.py ../pmvee_config/nginx-1.23.3/migrations.csv ./migrations.pmvee
 
       ln -fs "$__old" "../pmvee_config/$__this/nginx.json"
 
