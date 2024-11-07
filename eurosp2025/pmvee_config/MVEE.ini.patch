@@ -24,7 +24,7 @@ index 9b7c409..57725e5 100644
 +          "##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
 +          "##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
 +          "##fortdivide_location##/eurosp2025/microbenchmarks/mapping_count/lib/mapping_count_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/mapping_count/lib/mapping_count_f.so",
-+          "##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_f.so",
++          "##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_f.so"
 +        ]}
 +      }
      }
@@ -56,7 +56,7 @@ index 1e2b7be..57725e5 100644
 +          "##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_l.so=##fortdivide_location##/eurosp2025/pmvee_config/nginx-1.23.3/lib/nginx_f.so",
 +          "##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_l.so=##fortdivide_location##/eurosp2025/pmvee_config/lighttpd-1.4.60/lib/lighttpd_f.so",
 +          "##fortdivide_location##/eurosp2025/microbenchmarks/mapping_count/lib/mapping_count_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/mapping_count/lib/mapping_count_f.so",
-+          "##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_f.so",
++          "##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_l.so=##fortdivide_location##/eurosp2025/microbenchmarks/switching/lib/switcheroo_f.so"
 +        ]}
 +      }
      }
