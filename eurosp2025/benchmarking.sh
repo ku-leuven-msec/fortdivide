@@ -670,7 +670,7 @@ do
             shift
             ;;
         --nginx-scan)
-            nginx-scan-benchmark "-scan" 4
+            nginx-scan-benchmark "--ngx-split" "" 4
             # nginx-benchmark "--ngx-handler" "-handler"
             shift
             ;;
@@ -682,7 +682,7 @@ do
         --nginx-progress)
             nginx-benchmark "--ngx-split" "" 4
             nginx-diffed-benchmark "--ngx-split" "" 4
-            nginx-scan-benchmark "-scan"     4
+            nginx-scan-benchmark  "--ngx-split" "" 4
             shift
             ;;
         --nginx)
