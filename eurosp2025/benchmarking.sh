@@ -58,7 +58,7 @@ function execute_and_log
 
 function benchmark_on
 {
-    ssh -t fortdivide-benchmark "for __cpu_freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do [ -f \$__cpu_freq ] || continue; echo -n "performance" | sudo tee \$__cpu_freq > /dev/null || true; done; echo -n "1" | sudo tee "/sys/devices/system/cpu/intel_pstate/no_turbo" > /dev/null; echo -n "off" | sudo tee "/sys/devices/system/cpu/smt/control" > /dev/null; echo -n "Y" | sudo tee /sys/module/kernel/parameters/ignore_rlimit_dat; sudo sysctl -w kernel.yama.ptrace_scope=0"
+    ssh -t fortdivide-benchmark "for __cpu_freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do [ -f \$__cpu_freq ] || continue; echo -n "performance" | sudo tee \$__cpu_freq > /dev/null || true; done; echo -n "1" | sudo tee "/sys/devices/system/cpu/intel_pstate/no_turbo" > /dev/null; echo -n "off" | sudo tee "/sys/devices/system/cpu/smt/control" > /dev/null; echo -n "Y" | sudo tee /sys/module/kernel/parameters/ignore_rlimit_data; sudo sysctl -w kernel.yama.ptrace_scope=0"
 }
 
 
