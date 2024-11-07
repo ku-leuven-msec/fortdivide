@@ -22,8 +22,8 @@
         "name": "ngx_http_process_request_line",
         "return": "void",
         "enterexit": "enter",
-        "copy": "##benchmark_location##/pmvee_headers/nginx-1.23.3/ngx_http_process_request_line_migration_extra_copy.c",
-        "migration": "##benchmark_location##/pmvee_headers/nginx-1.23.3/ngx_http_process_request_line_migration_extra.c",
+        "copy": "##benchmark_location##/pmvee_config/nginx-1.23.3/ngx_http_process_request_line_migration_extra_copy.c",
+        "migration": "##benchmark_location##/pmvee_config/nginx-1.23.3/ngx_http_process_request_line_migration_extra.c",
         "arguments": 
         [
             { "name": "rev", "type": "ngx_event_t*" }
