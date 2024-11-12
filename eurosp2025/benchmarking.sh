@@ -209,11 +209,11 @@ function nginx-scan-benchmark
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so $__orig_remon_dir/IP-MON/libipmon.so"
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-emulate-$2-$3-pmvee-noipmon"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-emulate$2-$3-pmvee-noipmon"
 
     __ld_preload=""
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
-    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-emulate-$2-$3-pmvee-withipmon"
+    server-bench "$__benchmark_dir_out/nginx-1.23.3/pmvee/single/sbin/nginx" "$__output_dir/$__connections-connections/nginx-emulate$2-$3-pmvee-withipmon"
 
     execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
 }
@@ -292,11 +292,10 @@ function nginx-benchmark
 function lighttpd-benchmark
 {
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
-    logf "building lighttpd binaries ($1)"
-    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh $1 --pmvee --mappings --base 1>/dev/null"
-    execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
 
+    logf "building lighttpd binaries ($1)"
+    execute_and_wait "cd $__benchmark_dir/lighttpd-1.4.60 && ./lighttpd-1.4.60-build.sh --base $1 --pmvee --mappings 1>/dev/null"
+    execute_and_wait "cd $__remon_dir/PMVEE && make lib 1>/dev/null"
     __output_dir="$__output_dir_base/$__sub_output_dir/$__kernel_module/$__allocator/"
     mkdir -p "$__output_dir/$__connections-connections" || true
     logf "Outputting to $__output_dir"
@@ -308,7 +307,7 @@ function lighttpd-benchmark
     execute_and_wait "sed -i 's/\"use_ipmon\" : 1/\"use_ipmon\" : 0/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : true/\"use_ipmon\" : false/g' $__orig_remon_exec_dir/MVEE.ini"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-noipmon"
+    orig-server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-noipmon"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so  $__orig_remon_dir/IP-MON/libipmon.so"
     server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-pmvee-noipmon"
 
@@ -316,7 +315,7 @@ function lighttpd-benchmark
     execute_and_wait "sed -i 's/\"use_ipmon\" : 0/\"use_ipmon\" : 1/g' $__remon_exec_dir/MVEE.ini"
     execute_and_wait "sed -i 's/\"use_ipmon\" : false/\"use_ipmon\" : true/g' $__orig_remon_exec_dir/MVEE.ini"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-default.so  $__orig_remon_dir/IP-MON/libipmon.so"
-    server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-withipmon"
+    orig-server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/base/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-remon-withipmon"
     execute_and_wait "ln -fs $__orig_remon_dir/IP-MON/libipmon-pmvee.so  $__orig_remon_dir/IP-MON/libipmon.so"
     server-bench "\"$__benchmark_dir_out/lighttpd-1.4.60/pmvee/leader/sbin/lighttpd -D -f $__benchmark_dir_out/lighttpd-1.4.60/base/conf/test.conf\"" "$__output_dir/$__connections-connections/lighttpd$2-pmvee-withipmon"
 }
@@ -331,7 +330,7 @@ function mapping-count-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/mapping_count && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
 
     logf "Outputting to $__output_dir"
 
@@ -380,7 +379,7 @@ function switcheroo-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/switching && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
 
     logf "Outputting to $__output_dir"
 
@@ -422,7 +421,7 @@ function server-micro-benchmark
     execute_and_wait "cd $__benchmark_dir/microbenchmarks/server_micro && make 1>/dev/null"
 
     execute_and_wait "cd $__remon_dir/build && make benchmark && make enable-ipmon-pmvee && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
 
     logf "Outputting to $__output_dir"
 
@@ -462,7 +461,7 @@ function set_pmvee_allocator
 
     logf "building ReMon for pmvee allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
     logf "building ReMon-glibc for pmvee allocator"
     execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
@@ -487,7 +486,7 @@ function set_hardened_allocator
 
     logf "building ReMon for hardened allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
     logf "building ReMon-glibc for hardened allocator"
     execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
@@ -506,7 +505,7 @@ function set_libc_allocator
 
     logf "building ReMon for libc allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
     logf "building ReMon-glibc for libc allocator"
     execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
@@ -525,7 +524,7 @@ function set_no_allocator
 
     logf "building ReMon for no allocator"
     execute_and_wait "cd $__remon_dir/build && make enable-ipmon-pmvee && make benchmark && make -j 1>/dev/null"
-    cp $__remon_dir/IP-MON/libipmon.so $__remon_dir/IP-MON/libipmon-pmvee.so
+
     logf "building ReMon-glibc for no allocator"
     execute_and_wait "cd $__remon_glibc_dir/build-tree && make -j 1>/dev/null"
 }
@@ -691,8 +690,8 @@ do
             shift
             ;;
         --lighttpd)
-            lighttpd-benchmark "--default" "default"
-            lighttpd-benchmark "--faster"  "faster"
+            lighttpd-benchmark "--default" "-default"
+            lighttpd-benchmark "--faster"  "-faster"
             shift
             ;;
         --server-micro)
@@ -707,8 +706,8 @@ do
             nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
             __connections=1
-            lighttpd-benchmark "--default" "default"
-            lighttpd-benchmark "--faster"  "faster"
+            lighttpd-benchmark "--default" "-default"
+            lighttpd-benchmark "--faster"  "-faster"
             __connections=10
             shift
             ;;
@@ -728,8 +727,8 @@ do
             nginx-scan-benchmark "--ngx-full"  "-full" 4
             nginx-scan-benchmark "--ngx-split" ""     4
             # __connections=1
-            lighttpd-benchmark "--default" "default"
-            lighttpd-benchmark "--faster"  "faster"
+            lighttpd-benchmark "--default" "-default"
+            lighttpd-benchmark "--faster"  "-faster"
             # __connections=10
             shift
             ;;
@@ -752,6 +751,8 @@ do
             set_pmvee_allocator
             __allocator="pmvee"
 
+            nginx-benchmark "--ngx-full"  "-full" 1
+            nginx-benchmark "--ngx-split" ""     1
             nginx-benchmark "--ngx-full"  "-full" 4
             nginx-benchmark "--ngx-split" ""     4
             # nginx-diffed-benchmark "--ngx-full"  "-full" 4
@@ -765,7 +766,7 @@ do
             __allocator="libc"
 
             nginx-benchmark "--ngx-split" ""     4
-            lighttpd-benchmark "--faster"  "faster"
+            lighttpd-benchmark "--faster"  "-faster"
 
             set_pmvee_allocator
             __allocator="pmvee"
@@ -786,4 +787,4 @@ cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/$__today_ou
 cp -r "$__output_dir_base"/"$__sub_output_dir"/* "$__output_dir_base/latest/"
 
 scp -r "$__output_dir_base/latest/" $__benchmark_dir/
-ssh -t fortdivide-benchmark $__benchmark_dir/process.py "$__benchmark_dir/latest/"
+ssh -t fortdivide-benchmark $__benchmark_dir/process.py "$__output_dir_base/latest/"
