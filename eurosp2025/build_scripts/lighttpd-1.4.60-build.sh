@@ -42,6 +42,8 @@ do
       shift
       ;;
     --base)
+      sed -r -i 's/#if 1 \/\/ ifdef PMVEE_CONNECTION_HANDLE_READ_STATE/#ifdef PMVEE_CONNECTION_HANDLE_READ_STATE/g' ./src/connections.c
+      sed -r -i 's/#if 1 \/\/ ifdef PMVEE_HTTP_REQUEST_HEADERS_PROCESS/#ifdef PMVEE_HTTP_REQUEST_HEADERS_PROCESS/g' ./src/request.c
       __prefix="$__this_dir/../out/$__this/base"
 
       export CC="gcc $CFLAGS"

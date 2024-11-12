@@ -73,12 +73,11 @@ ngx_handler ()
   ln -fs $(readlink -f "../pmvee_config/$__this/nginx-ngx_http_wait_request_handler.json") ../pmvee_config/$__this/nginx.json
 }
 
-
 # Common flags: Wrap atomics
 __CFLAGS=""
 __CFLAGS_temp=""
 
-__old=$(readlink -f "../pmvee_config/$__this/nginx.json")
+__old=$(readlink -f "../pmvee_config/$__this/nginx.json" || echo "/dev/null")
 
 while test $# -gt 0
 do
