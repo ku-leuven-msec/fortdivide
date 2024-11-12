@@ -3,6 +3,10 @@ set -e
 
 cd $(readlink -f $(dirname ${BASH_SOURCE}))
 
+sudo apt install openssh-server
+mkdir ~/.ssh || true
+touch ~/.ssh/config || true
+
 ## kernel
 if [[ ! $(uname -r | grep -e "-ipmon-pmvee") ]]
 then 
