@@ -119,3 +119,44 @@ The symlinks are set by the Makefiles for the microbenchmarks and the `--mapping
 Thus, every time you want to run a specific benchmark, it is best to re-run these to set up the correct symlinks.
 
 ## Building Benchmarks
+
+### Microbenchmarks
+
+### nginx
+
+Options for `nginx-1.23.3-build.sh` are generally divided into three classes: build configuration, building the binaries, and setting up the FORTDIVIDE configuration.
+
+#### Configuration
+**`--ngx-full`** configures the nginx build for hooking `ngx_http_process_request_line` to enter MVX when called and exiting when returned.
+
+**`--ngx-split`** configures the nginx build for hooking `ngx_http_process_request_line` to enter MVX when called and `ngx_http_handler` to exit when called.
+
+#### Building
+**`--base`** configures and builds a native nginx. **NOTE: this resets any configuration done by `--nginx-full` or `--nginx-split`, always perform it last.**
+**`--pmvee-stubs`** builds the library containing the hooks for nginx. This option is dependent on what configuration option (`--nginx-full` or `--nginx-split`) was specified before.
+**`--pmvee`** builds the actual nginx binary after the hooking has been built, which we link against for simplicity. This option is dependent on what configuration option (`--nginx-full` or `--nginx-split`) was specified before and requires `--pmvee-stubs` to be specified before it.
+**`--pmvee-single`** builds the nginx binary and hooking library with only manual state migration for pointers on the heap. This option is dependent on what configuration option (`--nginx-full` or `--nginx-split`) was specified before.
+**`--pmvee-single-scanning`** builds the nginx binary and hooking library with no manual state migration left. This option is dependent on what configuration option (`--nginx-full` or `--nginx-split`) was specified before and requires FORTDIVIDE to be configured to perform heap scanning.
+
+#### FORTDIVIDE Setup
+**`--mappings`** constructs the file the will be loaded by the monitor through its `pmvee_mappings` configuration parameter.
+**`--mappings-single`** constructs the file the will be loaded by the monitor through its `pmvee_mappings` and `pmvee_migrations` configuration parameters.
+**`--mappings-single-scanning`** constructs the file the will be loaded by the monitor through its `pmvee_mappings` and `pmvee_migrations` configuration parameters.
+
+### lighttpd
+
+Options for `lighttpd-1.4.60-build.sh` are generally divided into three classes: build configuration, building the binaries, and setting up the FORTDIVIDE configuration.
+
+#### Configuration
+
+**`--default`** configures the lighttpd build for hooking `connection_handle_read_state` to enter MVX and exit on its return.
+**`--faster`** configures the lighttpd build for hooking `http_request_headers_process` to enter MVX and exit on its return.
+
+#### Building
+
+**`--base`** configures and builds the native lighttpd binary. **NOTE: this resets any configuration done by `--default` or `--faster`, always perform it last.**
+**`--pmvee`** builds the actual lighttpd binary. Requires `--default` or `--faster` to have been specified before.
+
+#### FORTDIVIDE Setup
+
+**`--mappings`** constructs the file the will be loaded by the monitor through its `pmvee_mappings` configuration parameter.
