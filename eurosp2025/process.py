@@ -245,28 +245,28 @@ def load_mapping_count_files(file_path):
                     time = int(line[1].split("us")[0])
                     line = line[0].split(" mapping count ")
                     size = int(line[0], 16)
-                    cunt = int(line[1])
+                    count = int(line[1])
                     if size not in result_data.toggle_mappings:
                         result_data.toggle_mappings[size] = {}
-                    if cunt not in result_data.toggle_mappings[size]:
-                        result_data.toggle_mappings[size][cunt] = []
-                    result_data.toggle_mappings[size][cunt].append(time/iterations)
+                    if count not in result_data.toggle_mappings[size]:
+                        result_data.toggle_mappings[size][count] = []
+                    result_data.toggle_mappings[size][count].append(time/iterations)
                 elif ">[migration " in line:
                     iterations = int(line.split(" us for ")[1].replace(" iterations", ''))
                     line = line.replace(">[migration ", '').split("] > time elapsed: ")
                     time = int(line[1].split("us")[0])
-                    cunt = int(line[0])
-                    if cunt not in result_data.migrations:
-                        result_data.migrations[cunt] = []
-                    result_data.migrations[cunt].append(time/iterations)
+                    count = int(line[0])
+                    if count not in result_data.migrations:
+                        result_data.migrations[count] = []
+                    result_data.migrations[count].append(time/iterations)
                 elif ">[pointer migration " in line:
                     iterations = int(line.split(" us for ")[1].replace(" iterations", ''))
                     line = line.replace(">[pointer migration ", '').split("] > time elapsed: ")
                     time = int(line[1].split("us")[0])
-                    cunt = int(line[0])
-                    if cunt not in result_data.pointers:
-                        result_data.pointers[cunt] = []
-                    result_data.pointers[cunt].append(time/iterations)
+                    count = int(line[0])
+                    if count not in result_data.pointers:
+                        result_data.pointers[count] = []
+                    result_data.pointers[count].append(time/iterations)
             run = result_file.split('/')[-1]
             if run == "native":
                 result.native = result_data
@@ -1110,23 +1110,23 @@ def micro_mapping_count_results_lower():
     cpmon_delta_avg = 0
     cpmon_delta_avg_count = 0
     table = {}
-    cunts = []
+    counts = []
     for size in mapping_count.pmvee_ipmon.toggle_mappings:
         table[size] = {}
         max_width = max(max_width, len(str(size/0x1000)))
         cpmon_delta = [ float("inf"), 0 ]
         nativ_delta = [ float("inf"), 0 ]
-        for cunt in mapping_count.pmvee_ipmon.toggle_mappings[size]:
-            if cunt not in cunts:
-                cunts.append(cunt)
-            if cunt not in table[size]:
-                table[size][cunt] = []
-                max_width = max(max_width, len(str(cunt)))
-            ipmon_time = (sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt])/len(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]))
-            table[size][cunt] = (ipmon_time)
+        for count in mapping_count.pmvee_ipmon.toggle_mappings[size]:
+            if count not in counts:
+                counts.append(count)
+            if count not in table[size]:
+                table[size][count] = []
+                max_width = max(max_width, len(str(count)))
+            ipmon_time = (sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count])/len(mapping_count.pmvee_ipmon.toggle_mappings[size][count]))
+            table[size][count] = (ipmon_time)
             max_width = max(max_width, len("%.2f" % (ipmon_time)))
-            cpmon_time = (sum(mapping_count.pmvee.toggle_mappings[size][cunt])/len(mapping_count.pmvee.toggle_mappings[size][cunt])) - ipmon_time
-            nativ_time = ipmon_time - (sum(mapping_count.native.toggle_mappings[size][cunt])/len(mapping_count.native.toggle_mappings[size][cunt]))
+            cpmon_time = (sum(mapping_count.pmvee.toggle_mappings[size][count])/len(mapping_count.pmvee.toggle_mappings[size][count])) - ipmon_time
+            nativ_time = ipmon_time - (sum(mapping_count.native.toggle_mappings[size][count])/len(mapping_count.native.toggle_mappings[size][count]))
 
             cpmon_delta_avg += cpmon_time
             cpmon_delta_avg_count += 1
@@ -1136,7 +1136,7 @@ def micro_mapping_count_results_lower():
             nativ_delta[0] = min(nativ_delta[0], nativ_time)
             nativ_delta[1] = max(nativ_delta[1], nativ_time)
 
-            # print("   > %d * %d pages: %.2f || %.2f" % (cunt, size/0x1000, cpmon_time, nativ_time))
+            # print("   > %d * %d pages: %.2f || %.2f" % (count, size/0x1000, cpmon_time, nativ_time))
         # print(" > [ %.2f ; %.2f ] || [ %.2f ; %.2f ]" % (cpmon_delta[0], cpmon_delta[1], nativ_delta[0], nativ_delta[1]))
 
         cpmon_delta_total[0] = min(cpmon_delta_total[0], cpmon_delta[0])
@@ -1152,10 +1152,10 @@ def micro_mapping_count_results_lower():
     for size in table:
         mapping_lower_table += "| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000)
     mapping_lower_table += '\n'
-    for cunt in cunts:
-        mapping_lower_table += " %s%s " % ((max_width-len(str(cunt)))*' ', cunt)
+    for count in counts:
+        mapping_lower_table += " %s%s " % ((max_width-len(str(count)))*' ', count)
         for size in table:
-            mapping_lower_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt])
+            mapping_lower_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][count])))*' ', table[size][count])
         mapping_lower_table += '\n'
     print()
     print(" > lower bound mapping count results ======================================")
@@ -1173,9 +1173,9 @@ def micro_mapping_count_results_lower():
         # print(size/0x1000)
         size_plot_count = []
         size_plot_time = []
-        for cunt in mapping_count.pmvee_ipmon.toggle_mappings[size]:
-            size_plot_count.append(cunt)
-            size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]))
+        for count in mapping_count.pmvee_ipmon.toggle_mappings[size]:
+            size_plot_count.append(count)
+            size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][count]))
         blt.plot(size_plot_count, size_plot_time, label="%s pages"%int(size/0x1000), color="black", marker=decorations[decoration_i])
         decoration_i+=1
         # print(" > %d pages: %.2f -> %.2f" % (size/0x1000, size_plot_time[0], size_plot_time[-1]))
@@ -1211,23 +1211,23 @@ def micro_mapping_count_results_upper():
     cpmon_delta_avg = 0
     cpmon_delta_avg_count = 0
     table = {}
-    cunts = []
+    counts = []
     for size in mapping_count.pmvee_ipmon.toggle_mappings:
         table[size] = {}
         max_width = max(max_width, len(str(size/0x1000)))
         cpmon_delta = [ float("inf"), 0 ]
         nativ_delta = [ float("inf"), 0 ]
-        for cunt in mapping_count.pmvee_ipmon.toggle_mappings[size]:
-            if cunt not in cunts:
-                cunts.append(cunt)
-            if cunt not in table[size]:
-                table[size][cunt] = []
-                max_width = max(max_width, len(str(cunt)))
-            ipmon_time = (sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt])/len(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]))
-            table[size][cunt] = (ipmon_time)
+        for count in mapping_count.pmvee_ipmon.toggle_mappings[size]:
+            if count not in counts:
+                counts.append(count)
+            if count not in table[size]:
+                table[size][count] = []
+                max_width = max(max_width, len(str(count)))
+            ipmon_time = (sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count])/len(mapping_count.pmvee_ipmon.toggle_mappings[size][count]))
+            table[size][count] = (ipmon_time)
             max_width = max(max_width, len("%.2f" % (ipmon_time)))
-            cpmon_time = (sum(mapping_count.pmvee.toggle_mappings[size][cunt])/len(mapping_count.pmvee.toggle_mappings[size][cunt])) - ipmon_time
-            nativ_time = ipmon_time - (sum(mapping_count.native.toggle_mappings[size][cunt])/len(mapping_count.native.toggle_mappings[size][cunt]))
+            cpmon_time = (sum(mapping_count.pmvee.toggle_mappings[size][count])/len(mapping_count.pmvee.toggle_mappings[size][count])) - ipmon_time
+            nativ_time = ipmon_time - (sum(mapping_count.native.toggle_mappings[size][count])/len(mapping_count.native.toggle_mappings[size][count]))
 
             cpmon_delta_avg += cpmon_time
             cpmon_delta_avg_count += 1
@@ -1237,7 +1237,7 @@ def micro_mapping_count_results_upper():
             nativ_delta[0] = min(nativ_delta[0], nativ_time)
             nativ_delta[1] = max(nativ_delta[1], nativ_time)
 
-            # print("   > %d * %d pages: %.2f || %.2f" % (cunt, size/0x1000, cpmon_time, nativ_time))
+            # print("   > %d * %d pages: %.2f || %.2f" % (count, size/0x1000, cpmon_time, nativ_time))
         # print(" > [ %.2f ; %.2f ] || [ %.2f ; %.2f ]" % (cpmon_delta[0], cpmon_delta[1], nativ_delta[0], nativ_delta[1]))
 
         cpmon_delta_total[0] = min(cpmon_delta_total[0], cpmon_delta[0])
@@ -1253,10 +1253,10 @@ def micro_mapping_count_results_upper():
     for size in table:
         mapping_upper_table += "| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000)
     mapping_upper_table += '\n'
-    for cunt in cunts:
-        mapping_upper_table += " %s%s " % ((max_width-len(str(cunt)))*' ', cunt)
+    for count in counts:
+        mapping_upper_table += " %s%s " % ((max_width-len(str(count)))*' ', count)
         for size in table:
-            mapping_upper_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt])
+            mapping_upper_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][count])))*' ', table[size][count])
         mapping_upper_table += '\n'
     mapping_upper_table += '\n'
     print(" > upper bound mapping count results ======================================")
@@ -1272,9 +1272,9 @@ def micro_mapping_count_results_upper():
             continue
         size_plot_count = []
         size_plot_time = []
-        for cunt in mapping_count.pmvee_ipmon.toggle_mappings[size]:
-            size_plot_count.append(cunt)
-            size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]))
+        for count in mapping_count.pmvee_ipmon.toggle_mappings[size]:
+            size_plot_count.append(count)
+            size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][count]))
         blt.plot(size_plot_count, size_plot_time, label="%s pages"%int(size/0x1000), color="black", marker=decorations[decoration_i])
         decoration_i+=1
     blt.xlabel("# mappings to be migrated")
@@ -1305,23 +1305,23 @@ def micro_migration_results_upper():
     blt.rc('font', size=15)
     fig = blt.figure(figsize=(8, 4))
     decoration_i = 0
-    size_plot_cunt = []
+    size_plot_count = []
     size_plot_time = []
     pointer = [float('inf'), 0]
     asis = [float('inf'), 0]
-    for cunt in mapping_count.pmvee_ipmon.migrations:
-        size_plot_cunt.append(cunt)
-        asis = [min(asis[0], sum(mapping_count.pmvee_ipmon.migrations[cunt]) / len(mapping_count.pmvee_ipmon.migrations[cunt])), max(asis[1], sum(mapping_count.pmvee_ipmon.migrations[cunt]) / len(mapping_count.pmvee_ipmon.migrations[cunt]))]
-        size_plot_time.append(sum(mapping_count.pmvee_ipmon.migrations[cunt]) / len(mapping_count.pmvee_ipmon.migrations[cunt]))
-    blt.plot(size_plot_cunt, size_plot_time, label="migration", color="black", marker=decorations[decoration_i])
+    for count in mapping_count.pmvee_ipmon.migrations:
+        size_plot_count.append(count)
+        asis = [min(asis[0], sum(mapping_count.pmvee_ipmon.migrations[count]) / len(mapping_count.pmvee_ipmon.migrations[count])), max(asis[1], sum(mapping_count.pmvee_ipmon.migrations[count]) / len(mapping_count.pmvee_ipmon.migrations[count]))]
+        size_plot_time.append(sum(mapping_count.pmvee_ipmon.migrations[count]) / len(mapping_count.pmvee_ipmon.migrations[count]))
+    blt.plot(size_plot_count, size_plot_time, label="migration", color="black", marker=decorations[decoration_i])
     decoration_i+=1
-    size_plot_cunt = []
+    size_plot_count = []
     size_plot_time = []
-    for cunt in mapping_count.pmvee_ipmon.pointers:
-        size_plot_cunt.append(cunt)
-        pointer = [min(asis[0], sum(mapping_count.pmvee_ipmon.pointers[cunt]) / len(mapping_count.pmvee_ipmon.pointers[cunt])), max(asis[1], sum(mapping_count.pmvee_ipmon.pointers[cunt]) / len(mapping_count.pmvee_ipmon.pointers[cunt]))]
-        size_plot_time.append(sum(mapping_count.pmvee_ipmon.pointers[cunt]) / len(mapping_count.pmvee_ipmon.pointers[cunt]))
-    blt.plot(size_plot_cunt, size_plot_time, label="pointer migration", color="black", marker=decorations[decoration_i])
+    for count in mapping_count.pmvee_ipmon.pointers:
+        size_plot_count.append(count)
+        pointer = [min(asis[0], sum(mapping_count.pmvee_ipmon.pointers[count]) / len(mapping_count.pmvee_ipmon.pointers[count])), max(asis[1], sum(mapping_count.pmvee_ipmon.pointers[count]) / len(mapping_count.pmvee_ipmon.pointers[count]))]
+        size_plot_time.append(sum(mapping_count.pmvee_ipmon.pointers[count]) / len(mapping_count.pmvee_ipmon.pointers[count]))
+    blt.plot(size_plot_count, size_plot_time, label="pointer migration", color="black", marker=decorations[decoration_i])
     decoration_i+=1
     blt.xlabel("# values to be migrated")
     blt.ylabel("migration duration (µs)")
@@ -1337,8 +1337,8 @@ def micro_migration_results_upper():
 
     global migration_table
     migration_table = ""
-    for cunt in mapping_count.pmvee_ipmon.pointers:
-        migration_table += "%d\t| %.2f\t | %.2f\n" % (cunt, sum(mapping_count.pmvee_ipmon.migrations[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt]), sum(mapping_count.pmvee_ipmon.pointers[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt]))
+    for count in mapping_count.pmvee_ipmon.pointers:
+        migration_table += "%d\t| %.2f\t | %.2f\n" % (count, sum(mapping_count.pmvee_ipmon.migrations[count])/len(mapping_count.pmvee_ipmon.migrations[count]), sum(mapping_count.pmvee_ipmon.pointers[count])/len(mapping_count.pmvee_ipmon.migrations[count]))
 
 micro_mapping_count_results_lower()
 micro_mapping_count_results_upper()
@@ -1377,9 +1377,9 @@ def micro_mapping_count_results():
             continue
         size_plot_count = []
         size_plot_time = []
-        for cunt in mapping_count.pmvee.toggle_mappings[size]:
-            size_plot_count.append(cunt)
-            size_plot_time.append(sum(mapping_count.pmvee.toggle_mappings[size][cunt]) / len(mapping_count.pmvee.toggle_mappings[size][cunt]))
+        for count in mapping_count.pmvee.toggle_mappings[size]:
+            size_plot_count.append(count)
+            size_plot_time.append(sum(mapping_count.pmvee.toggle_mappings[size][count]) / len(mapping_count.pmvee.toggle_mappings[size][count]))
         pmvee_ax.plot(size_plot_count, size_plot_time, label="%s pages"%int(size/0x1000), color="black", marker=decorations[decoration_i])
         labels.append("%s pages"%int(size/0x1000))
         decoration_i+=1
@@ -1394,9 +1394,9 @@ def micro_mapping_count_results():
     #         continue
     #     size_plot_count = []
     #     size_plot_time = []
-    #     for cunt in mapping_count.pmvee.toggle_mappings[size]:
-    #         size_plot_count.append(cunt)
-    #         size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]) / len(mapping_count.pmvee.toggle_mappings[size][cunt]))
+    #     for count in mapping_count.pmvee.toggle_mappings[size]:
+    #         size_plot_count.append(count)
+    #         size_plot_time.append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count]) / len(mapping_count.pmvee.toggle_mappings[size][count]))
     #     pmvee_ipmon_ax.plot(size_plot_count, size_plot_time, label="%s pages"%int(size/0x1000), color="black", marker=decorations[decoration_i])
     #     decoration_i+=1
     # pmvee_ipmon_ax.set_xlabel("# mappings to be migrated")
@@ -1436,13 +1436,13 @@ def micro_mapping_count_stacked():
     size_plot_count = []
     size_plot_time = [[], [], []]
     size = 64*0x1000
-    for cunt in mapping_count.pmvee.toggle_mappings[size]:
-        size_plot_count.append(cunt)
-        size_plot_time[2].append(sum(mapping_count.pmvee.toggle_mappings[size][cunt]) / len(mapping_count.pmvee.toggle_mappings[size][cunt]))
-    for cunt in mapping_count.native.toggle_mappings[size]:
-        size_plot_time[1].append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][cunt]))
-    for cunt in mapping_count.native.toggle_mappings[size]:
-        size_plot_time[0].append(sum(mapping_count.native.toggle_mappings[size][cunt]) / len(mapping_count.native.toggle_mappings[size][cunt]))
+    for count in mapping_count.pmvee.toggle_mappings[size]:
+        size_plot_count.append(count)
+        size_plot_time[2].append(sum(mapping_count.pmvee.toggle_mappings[size][count]) / len(mapping_count.pmvee.toggle_mappings[size][count]))
+    for count in mapping_count.native.toggle_mappings[size]:
+        size_plot_time[1].append(sum(mapping_count.pmvee_ipmon.toggle_mappings[size][count]) / len(mapping_count.pmvee_ipmon.toggle_mappings[size][count]))
+    for count in mapping_count.native.toggle_mappings[size]:
+        size_plot_time[0].append(sum(mapping_count.native.toggle_mappings[size][count]) / len(mapping_count.native.toggle_mappings[size][count]))
     # for i in range(len(size_plot_time[0])):
     #     size_plot_time[2][i] -= size_plot_time[1][i]
     # for i in range(len(size_plot_time[0])):
