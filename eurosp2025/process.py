@@ -1820,22 +1820,22 @@ results_string = f"""\
 
 ### Lower Bound
 
-![Mapping count micro benchmark - lower bound]({mapping_lower_path: s})
+![Mapping count micro benchmark - lower bound]({mapping_lower_path})
 
-{mapping_lower_table: s}
+{mapping_lower_table}
 
 ### Upper Bound
 
-![Mapping count micro benchmark - upper bound]({mapping_upper_path: s})
+![Mapping count micro benchmark - upper bound]({mapping_upper_path})
 
-{mapping_upper_table: s}
+{mapping_upper_table}
 
 
 ## Migration
 
-![Migration overhead]({migration_path: s})
+![Migration overhead]({migration_path})
 
-{migration_table: s}
+{migration_table}
 
 # Server Benchmarks
 
@@ -1847,7 +1847,7 @@ lighttpd C1: enter when `http_request_headers_process` is called, exit when it r
 
 ## server Latency
 
-![Server latency graph]({latency_path: s})
+![Server latency graph]({latency_path})
 
 - nginx
   - C1:
@@ -1878,7 +1878,7 @@ lighttpd C1: enter when `http_request_headers_process` is called, exit when it r
 
 ## server Overhead
 
-![Relative server overhead graph]({overhead_path: s})
+![Relative server overhead graph]({overhead_path})
 
 - nginx
   - C1:
