@@ -66,6 +66,15 @@ nginx_C2_FORTDIVIDE_allocator = -1
 lighttpd_C2_libc_allocator = -1
 lighttpd_C2_FORTDIVIDE_allocator = -1
 
+mapping_lower_path = ""
+mapping_lower_table = ""
+mapping_upper_path = ""
+mapping_upper_table = ""
+migration_path = ""
+migration_table = ""
+latency_path = ""
+overhead_path = ""
+
 
 if len(sys.argv) != 2:
     exit(1)
@@ -930,6 +939,8 @@ def pmvee_skip_server_results(nginx_connections=10, nginx_single_connections=10,
     blt.tight_layout(pad=0.5)
     # fig.legend(labels=legend_labels, loc="lower center", ncol=3, prop={'size': 15}, bbox_to_anchor=(0, 1))
     blt.figlegend(loc="lower center", ncol=3, prop={'size': 15}, labels=legend_labels, bbox_to_anchor=(0.5, 1))
+    global latency_path
+    latency_path = os.path.abspath("./servers_latency%s.pdf" % (suffix))
     blt.savefig("servers_latency%s.pdf" % (suffix), format="pdf", bbox_inches="tight")
     
     blt.rc('font', size=15)
@@ -1068,6 +1079,8 @@ def pmvee_skip_server_results(nginx_connections=10, nginx_single_connections=10,
     blt.tight_layout(pad=0.5)
     # fig.legend(labels=legend_labels, loc="lower center", ncol=3, prop={'size': 15}, bbox_to_anchor=(0, 1))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
+    global overhead_path
+    overhead_path = os.path.abspath("./servers_throughput%s.pdf" % (suffix))
     blt.savefig("servers_throughput%s.pdf" % (suffix), format="pdf", bbox_inches="tight")
 
 pmvee_skip_server_results()
@@ -1134,15 +1147,16 @@ def micro_mapping_count_results_lower():
 
     print(" > [ %.2f ; %.2f ] || [ %.2f ; %.2f ]" % (cpmon_delta_total[0], cpmon_delta_total[1], nativ_delta_total[0], nativ_delta_total[1]))
     print(" > average: %.2f" % (cpmon_delta_avg / cpmon_delta_avg_count))
-    print(" %s " % (max_width*' '), end='')
+    global mapping_lower_table
+    mapping_lower_table = " %s " % (max_width*' ')
     for size in table:
-        print("| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000), end='')
-    print()
+        mapping_lower_table += "| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000)
+    mapping_lower_table += '\n'
     for cunt in cunts:
-        print(" %s%s " % ((max_width-len(str(cunt)))*' ', cunt), end='')
+        mapping_lower_table += " %s%s " % ((max_width-len(str(cunt)))*' ', cunt)
         for size in table:
-            print("| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt]), end='')
-        print('')
+            mapping_lower_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt])
+        mapping_lower_table += '\n'
     print()
     print(" > lower bound mapping count results ======================================")
 
@@ -1175,6 +1189,8 @@ def micro_mapping_count_results_lower():
     fig.legend(loc="upper center", prop={'size': 15}, ncol=2, bbox_to_anchor=(0.36, 0.95))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
+    global mapping_upper_path
+    mapping_upper_path = os.path.abspath("./micro_mapping_count_lowe.pdf")
     blt.savefig("micro_mapping_count_lower.pdf", format="pdf", bbox_inches="tight")
 
 
@@ -1232,16 +1248,17 @@ def micro_mapping_count_results_upper():
 
     print(" > [ %.2f ; %.2f ] || [ %.2f ; %.2f ]" % (cpmon_delta_total[0], cpmon_delta_total[1], nativ_delta_total[0], nativ_delta_total[1]))
     print(" > average: %.2f" % (cpmon_delta_avg / cpmon_delta_avg_count))
-    print(" %s " % (max_width*' '), end='')
+    global mapping_upper_table
+    mapping_upper_table = " %s " % (max_width*' ')
     for size in table:
-        print("| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000), end='')
-    print()
+        mapping_upper_table += "| %s%s " % ((max_width-len(str(size/0x1000)))*' ', size/0x1000)
+    mapping_upper_table += '\n'
     for cunt in cunts:
-        print(" %s%s " % ((max_width-len(str(cunt)))*' ', cunt), end='')
+        mapping_upper_table += " %s%s " % ((max_width-len(str(cunt)))*' ', cunt)
         for size in table:
-            print("| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt]), end='')
-        print('')
-    print()
+            mapping_upper_table += "| %s%.2f " % ((max_width-len("%.2f"%(table[size][cunt])))*' ', table[size][cunt])
+        mapping_upper_table += '\n'
+    mapping_upper_table += '\n'
     print(" > upper bound mapping count results ======================================")
 
     decorations = [ "o", "D", "^", "v", "*", "p" ]
@@ -1268,6 +1285,8 @@ def micro_mapping_count_results_upper():
     fig.legend(loc="upper center", prop={'size': 15}, ncol=2, bbox_to_anchor=(0.36, 0.95))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
+    global mapping_upper_path
+    mapping_upper_path = os.path.abspath("./micro_mapping_count_upper.pdf")
     blt.savefig("micro_mapping_count_upper.pdf", format="pdf", bbox_inches="tight")
 
 
@@ -1312,10 +1331,14 @@ def micro_migration_results_upper():
     fig.legend(loc="upper center", prop={'size': 15}, ncol=1, bbox_to_anchor=(0.29, 0.95))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
+    global migration_path
+    migration_path = os.path.abspath("./migrations.pdf")
     blt.savefig("migrations.pdf", format="pdf", bbox_inches="tight")
 
+    global migration_table
+    migration_table = ""
     for cunt in mapping_count.pmvee_ipmon.pointers:
-        print("%d\t| %.2f\t | %.2f" % (cunt, sum(mapping_count.pmvee_ipmon.migrations[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt]), sum(mapping_count.pmvee_ipmon.pointers[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt])))
+        migration_table += "%d\t| %.2f\t | %.2f\n" % (cunt, sum(mapping_count.pmvee_ipmon.migrations[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt]), sum(mapping_count.pmvee_ipmon.pointers[cunt])/len(mapping_count.pmvee_ipmon.migrations[cunt]))
 
 micro_mapping_count_results_lower()
 micro_mapping_count_results_upper()
@@ -1793,7 +1816,26 @@ results_string = f"""\
  - CP-MON estimate: {clone_CPMON_estimate: .2f}us
  - IP-mON estimate: {clone_IPMON_estimate: .2f}us
 
+## Mapping Count
+
+### Lower Bound
+
+![Mapping count micro benchmark - lower bound]({mapping_lower_path: s})
+
+{mapping_lower_table: s}
+
+### Upper Bound
+
+![Mapping count micro benchmark - upper bound]({mapping_upper_path: s})
+
+{mapping_upper_table: s}
+
+
 ## Migration
+
+![Migration overhead]({migration_path: s})
+
+{migration_table: s}
 
 # Server Benchmarks
 
@@ -1804,6 +1846,8 @@ lighttpd C1: enter when `connection_handle_read_state` is called, exit when it r
 lighttpd C1: enter when `http_request_headers_process` is called, exit when it returns
 
 ## server Latency
+
+![Server latency graph]({latency_path: s})
 
 - nginx
   - C1:
@@ -1834,9 +1878,11 @@ lighttpd C1: enter when `http_request_headers_process` is called, exit when it r
 
 ## server Overhead
 
+![Relative server overhead graph]({overhead_path: s})
+
 - nginx
   - C1:
-    - native:                -  % ({nginx_C1_overhead_native: .2f} requests/sec)
+    - native:              - % ({nginx_C1_overhead_native: .2f} requests/sec)
     - ReMon:               {100 * (nginx_C1_overhead_ReMon / nginx_C1_overhead_native): .2f} % ({nginx_C1_overhead_ReMon: .2f} requests/sec)
     - FORTDIVIDE:          {100 * (nginx_C1_overhead_FORTDIVIDE / nginx_C1_overhead_native): .2f} % ({nginx_C1_overhead_FORTDIVIDE: .2f} requests/sec)
     - ReMon + IP-MON:      {100 * (nginx_C1_overhead_ReMon_IPMON / nginx_C1_overhead_native): .2f} % ({nginx_C1_overhead_ReMon_IPMON: .2f} requests/sec)
@@ -1878,87 +1924,6 @@ lighttpd C1: enter when `http_request_headers_process` is called, exit when it r
   - FORTDIVIDE allocator: {100 * (lighttpd_C2_FORTDIVIDE_allocator / lighttpd_C2_overhead_native): .2f} % ({lighttpd_C2_FORTDIVIDE_allocator: .2f} requests/sec)
 """
 
-print(results_string)
-# with open("fortdivide-results.md", 'w') as fortdivide_results_file:
-    # fortdivide_results_file.write(results_string % (
-    #     getpid_CPMON, # getpid - CP-MON
-    #     getpid_IPMON, # getpid - IP-MON
-    #     toggle_MVX_CPMON, toggle_MVX_CPMON - getpid_CPMON, # toggle MVX - CP-MON
-    #     toggle_MVX_IPMON, toggle_MVX_IPMON - getpid_IPMON, # toggle MVX - IP-MON
-    #     fork_native, # fork - native
-    #     fork_CPMON_estimate, # fork - CP-MON estimate
-    #     fork_IPMON_estimate, # fork - IP-MON estimate
-    #     clone_native, # clone - native
-    #     clone_CPMON_estimate, # clone - CP-MON estimate
-    #     clone_IPMON_estimate, # clone - IP-MON estimate
-    #     nginx_C1_latency_native, # nginx C1 latency - native
-    #     nginx_C1_latency_ReMon, # nginx C1 latency - ReMon
-    #     nginx_C1_latency_FORTDIVIDE, # nginx C1 latency - FORTDIVIDE
-    #     nginx_C1_latency_ReMon_IPMON, # nginx C1 latency - ReMon + IP-MON
-    #     nginx_C1_latency_FORTDIVIDE_IPMON, # nginx C1 latency - FORTDIVIDE + IP-MON
-    #     nginx_C2_latency_native, # nginx C2 latency - native
-    #     nginx_C2_latency_ReMon, # nginx C2 latency - ReMon
-    #     nginx_C2_latency_FORTDIVIDE, # nginx C2 latency - FORTDIVIDE
-    #     nginx_C2_latency_ReMon_IPMON, # nginx C2 latency - ReMon + IP-MON
-    #     nginx_C2_latency_FORTDIVIDE_IPMON, # nginx C2 latency - FORTDIVIDE + IP-MON
-    #     lighttpd_C1_latency_native, # lighttpd C1 latency - native
-    #     lighttpd_C1_latency_ReMon, # lighttpd C1 latency - ReMon
-    #     lighttpd_C1_latency_FORTDIVIDE, # lighttpd C1 latency - FORTDIVIDE
-    #     lighttpd_C1_latency_ReMon_IPMON, # lighttpd C1 latency - ReMon + IP-MON
-    #     lighttpd_C1_latency_FORTDIVIDE_IPMON, # lighttpd C1 latency - FORTDIVIDE + IP-MON
-    #     lighttpd_C2_latency_native, # lighttpd C2 latency - native
-    #     lighttpd_C2_latency_ReMon, # lighttpd C2 latency - ReMon
-    #     lighttpd_C2_latency_FORTDIVIDE, # lighttpd C2 latency - FORTDIVIDE
-    #     lighttpd_C2_latency_ReMon_IPMON, # lighttpd C2 latency - ReMon + IP-MON
-    #     lighttpd_C2_latency_FORTDIVIDE_IPMON, # lighttpd C2 latency - FORTDIVIDE + IP-MON
-    #     nginx_C1_overhead_native, # nginx C1 overhead - native
-    #     nginx_C1_overhead_ReMon / nginx_C1_overhead_native,
-    #     nginx_C1_overhead_ReMon, # nginx C1 overhead - ReMon
-    #     nginx_C1_overhead_FORTDIVIDE / nginx_C1_overhead_native,
-    #     nginx_C1_overhead_FORTDIVIDE, # nginx C1 overhead - FORTDIVIDE
-    #     nginx_C1_overhead_ReMon_IPMON / nginx_C1_overhead_native,
-    #     nginx_C1_overhead_ReMon_IPMON, # nginx C1 overhead - ReMon + IP-MON
-    #     nginx_C1_overhead_FORTDIVIDE_IPMON / nginx_C1_overhead_native,
-    #     nginx_C1_overhead_FORTDIVIDE_IPMON, # nginx C1 overhead - FORTDIVIDE + IP-MON
-    #     nginx_C2_overhead_native, # nginx C2 overhead - native
-    #     nginx_C2_overhead_ReMon / nginx_C2_overhead_native,
-    #     nginx_C2_overhead_ReMon, # nginx C2 overhead - ReMon
-    #     nginx_C2_overhead_FORTDIVIDE / nginx_C2_overhead_native,
-    #     nginx_C2_overhead_FORTDIVIDE, # nginx C2 overhead - FORTDIVIDE
-    #     nginx_C2_overhead_ReMon_IPMON / nginx_C2_overhead_native,
-    #     nginx_C2_overhead_ReMon_IPMON, # nginx C2 overhead - ReMon + IP-MON
-    #     nginx_C2_overhead_FORTDIVIDE_IPMON / nginx_C2_overhead_native,
-    #     nginx_C2_overhead_FORTDIVIDE_IPMON, # nginx C2 overhead - FORTDIVIDE + IP-MON
-    #     lighttpd_C1_overhead_native, # lighttpd C1 overhead - native
-    #     lighttpd_C1_overhead_ReMon / lighttpd_C1_overhead_native,
-    #     lighttpd_C1_overhead_ReMon, # lighttpd C1 overhead - ReMon
-    #     lighttpd_C1_overhead_FORTDIVIDE / lighttpd_C1_overhead_native,
-    #     lighttpd_C1_overhead_FORTDIVIDE, # lighttpd C1 overhead - FORTDIVIDE
-    #     lighttpd_C1_overhead_ReMon_IPMON / lighttpd_C1_overhead_native,
-    #     lighttpd_C1_overhead_ReMon_IPMON, # lighttpd C1 overhead - ReMon + IP-MON
-    #     lighttpd_C1_overhead_FORTDIVIDE_IPMON / lighttpd_C1_overhead_native,
-    #     lighttpd_C1_overhead_FORTDIVIDE_IPMON, # lighttpd C1 overhead - FORTDIVIDE + IP-MON
-    #     lighttpd_C2_overhead_native, # lighttpd C2 overhead - native
-    #     lighttpd_C2_overhead_ReMon / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_overhead_ReMon, # lighttpd C2 overhead - ReMon
-    #     lighttpd_C2_overhead_FORTDIVIDE / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_overhead_FORTDIVIDE, # lighttpd C2 overhead - FORTDIVIDE
-    #     lighttpd_C2_overhead_ReMon_IPMON / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_overhead_ReMon_IPMON, # lighttpd C2 overhead - ReMon + IP-MON
-    #     lighttpd_C2_overhead_FORTDIVIDE_IPMON / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_overhead_FORTDIVIDE_IPMON, # lighttpd C2 overhead - FORTDIVIDE + IP-MON
-    #     nginx_C2_manual_migration_handlers / nginx_C2_overhead_native,
-    #     nginx_C2_manual_migration_handlers, # nginx C2 - manual migration handlers
-    #     nginx_C2_known_globals / nginx_C2_overhead_native,
-    #     nginx_C2_known_globals, # nginx C2 - known globals and manual pointer handlers for the heap
-    #     nginx_C2_pointer_scanning / nginx_C2_overhead_native,
-    #     nginx_C2_pointer_scanning, # nginx C2 - known globals and pointer scanning for the heap
-    #     nginx_C2_libc_allocator / nginx_C2_overhead_native,
-    #     nginx_C2_libc_allocator, # nginx C2 - libc allocator
-    #     nginx_C2_FORTDIVIDE_allocator / nginx_C2_overhead_native,
-    #     nginx_C2_FORTDIVIDE_allocator, # nginx C2 - FORTDIVIDE allocator
-    #     lighttpd_C2_libc_allocator / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_libc_allocator, # lighttpd C2 - libc allocator
-    #     lighttpd_C2_FORTDIVIDE_allocator / lighttpd_C2_overhead_native,
-    #     lighttpd_C2_FORTDIVIDE_allocator, # lighttpd C2 - FORTDIVIDE allocator
-    # ))
+
+with open("fortdivide-results.md", 'w') as fortdivide_results_file:
+    fortdivide_results_file.write(results_string)
