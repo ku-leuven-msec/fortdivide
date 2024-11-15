@@ -101,6 +101,7 @@ On this dedicated machine, you will have to edit `benchmarking.sh` and replace l
 
 ### Interpreting Output
 
+`eurosp2025/process.py` outputs the graphs in pdf as well as a comprehensive file with results, `fortdivide-results.md`, in the current working directory.
 The results will always be outputted in `eurosp2025/`, regardless of whether the benchmarking client was the same local machine or a connected machine.
 The latest results are also always copied to `eurosp2025/latest/`, so they can be reprocessed by running `eurosp2025/process.py eurosp2025/latest/`.
 
