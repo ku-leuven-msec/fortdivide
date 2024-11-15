@@ -940,7 +940,7 @@ def pmvee_skip_server_results(nginx_connections=10, nginx_single_connections=10,
     # fig.legend(labels=legend_labels, loc="lower center", ncol=3, prop={'size': 15}, bbox_to_anchor=(0, 1))
     blt.figlegend(loc="lower center", ncol=3, prop={'size': 15}, labels=legend_labels, bbox_to_anchor=(0.5, 1))
     global latency_path
-    latency_path = os.path.abspath("./servers_latency%s.pdf" % (suffix))
+    latency_path = ("./servers_latency%s.pdf" % (suffix)) # os.path.abspath("./servers_latency%s.pdf" % (suffix))
     blt.savefig("servers_latency%s.pdf" % (suffix), format="pdf", bbox_inches="tight")
     
     blt.rc('font', size=15)
@@ -1080,7 +1080,7 @@ def pmvee_skip_server_results(nginx_connections=10, nginx_single_connections=10,
     # fig.legend(labels=legend_labels, loc="lower center", ncol=3, prop={'size': 15}, bbox_to_anchor=(0, 1))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
     global overhead_path
-    overhead_path = os.path.abspath("./servers_throughput%s.pdf" % (suffix))
+    overhead_path = ("./servers_throughput%s.pdf" % (suffix)) # os.path.abspath("./servers_throughput%s.pdf" % (suffix))
     blt.savefig("servers_throughput%s.pdf" % (suffix), format="pdf", bbox_inches="tight")
 
 pmvee_skip_server_results()
@@ -1189,8 +1189,8 @@ def micro_mapping_count_results_lower():
     fig.legend(loc="upper center", prop={'size': 15}, ncol=2, bbox_to_anchor=(0.36, 0.95))
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
-    global mapping_upper_path
-    mapping_upper_path = os.path.abspath("./micro_mapping_count_lowe.pdf")
+    global mapping_lower_path
+    mapping_lower_path = ("./micro_mapping_count_lower.pdf") # os.path.abspath("./micro_mapping_count_lowe.pdf")
     blt.savefig("micro_mapping_count_lower.pdf", format="pdf", bbox_inches="tight")
 
 
@@ -1286,7 +1286,7 @@ def micro_mapping_count_results_upper():
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
     global mapping_upper_path
-    mapping_upper_path = os.path.abspath("./micro_mapping_count_upper.pdf")
+    mapping_upper_path = ("./micro_mapping_count_upper.pdf") # os.path.abspath("./micro_mapping_count_upper.pdf")
     blt.savefig("micro_mapping_count_upper.pdf", format="pdf", bbox_inches="tight")
 
 
@@ -1332,7 +1332,7 @@ def micro_migration_results_upper():
     blt.grid(which="major", axis="y", dashes=(5, 5), zorder=-1)
 
     global migration_path
-    migration_path = os.path.abspath("./migrations.pdf")
+    migration_path = ("./migrations.pdf") # os.path.abspath("./migrations.pdf")
     blt.savefig("migrations.pdf", format="pdf", bbox_inches="tight")
 
     global migration_table
